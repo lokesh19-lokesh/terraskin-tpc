@@ -2,18 +2,20 @@ export interface Product {
   id: string;
   name: string;
   description: string;
-  fullDescription: string;
+  fullDescription?: string;
   price: number;
   originalPrice?: number;
-  images: string[];
+  images?: string[];
+  image_url?: string;
   category: string;
-  skinType: string[];
-  ingredients: string[];
-  benefits: string[];
-  isBestSeller: boolean;
-  isNew: boolean;
-  rating: number;
-  reviews: number;
+  skinType?: string[];
+  ingredients?: string[];
+  benefits?: string[];
+  isBestSeller?: boolean;
+  isNew?: boolean;
+  rating?: number;
+  reviews?: number;
+  stock_quantity?: number;
 }
 
 export interface CartItem extends Product {

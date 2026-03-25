@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Star, ShoppingCart, Heart, ChevronLeft, ChevronRight, Check } from 'lucide-react';
-import { products } from '../data/products';
-import { Product } from '../types';
+import { supabase } from '../lib/supabase';
 import { useCart } from '../context/CartContext';
 import ProductCard from '../components/ProductCard';
 import AnimatedSection from '../components/AnimatedSection';
@@ -10,17 +9,31 @@ import AnimatedSection from '../components/AnimatedSection';
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { dispatch } = useCart();
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'description' | 'ingredients' | 'benefits'>('description');
+  const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
 
   useEffect(() => {
-    if (id) {
-      const foundProduct = products.find(p => p.id === id);
-      setProduct(foundProduct || null);
-    }
+    const loadProduct = async () => {
+      if (id) {
+        setLoading(true);
+        const { data } = await supabase.from('products').select('*').eq('id', id).single();
+        if (data) {
+          setProduct(data);
+          // Try to load related
+          const { data: related } = await supabase.from('products').select('*').eq('category', data.category).neq('id', id).limit(4);
+          if (related) setRelatedProducts(related);
+        }
+        setLoading(false);
+      }
+    };
+    loadProduct();
   }, [id]);
+
+  if (loading) return <div className="pt-16 min-h-screen flex items-center justify-center">Loading product...</div>;
 
   if (!product) {
     return (
@@ -35,22 +48,20 @@ const ProductDetails: React.FC = () => {
     );
   }
 
-  const relatedProducts = products
-    .filter(p => p.id !== product.id && p.category === product.category)
-    .slice(0, 4);
-
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
       dispatch({ type: 'ADD_TO_CART', payload: product });
     }
   };
 
+  const imagesArray = product.images || (product.image_url ? [product.image_url] : ['https://images.pexels.com/photos/4465831/pexels-photo-4465831.jpeg?auto=compress&cs=tinysrgb&w=800']);
+
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % product.images.length);
+    setCurrentImageIndex((prev) => (prev + 1) % imagesArray.length);
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + product.images.length) % product.images.length);
+    setCurrentImageIndex((prev) => (prev - 1 + imagesArray.length) % imagesArray.length);
   };
 
   return (
@@ -75,12 +86,12 @@ const ProductDetails: React.FC = () => {
             <div className="space-y-4">
               <div className="relative bg-white rounded-lg overflow-hidden shadow-sm">
                 <img
-                  src={product.images[currentImageIndex]}
+                  src={imagesArray[currentImageIndex]}
                   alt={product.name}
                   className="w-full h-96 object-cover"
                 />
                 
-                {product.images.length > 1 && (
+                {imagesArray.length > 1 && (
                   <>
                     <button
                       onClick={prevImage}
@@ -118,9 +129,9 @@ const ProductDetails: React.FC = () => {
               </div>
 
               {/* Thumbnail images */}
-              {product.images.length > 1 && (
+              {imagesArray.length > 1 && (
                 <div className="flex space-x-2">
-                  {product.images.map((image, index) => (
+                  {imagesArray.map((image: string, index: number) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
@@ -173,7 +184,6 @@ const ProductDetails: React.FC = () => {
                   <span className="ml-3 text-xl text-gray-500 line-through">
                     ₹{product.originalPrice}
                   </span>
-
                 )}
               </div>
 
@@ -182,19 +192,21 @@ const ProductDetails: React.FC = () => {
               </p>
 
               {/* Skin Types */}
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-gray-900 mb-2">Suitable for:</h3>
-                <div className="flex flex-wrap gap-2">
-                  {product.skinType.map((type, index) => (
-                    <span
-                      key={index}
-                      className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm capitalize"
-                    >
-                      {type} skin
-                    </span>
-                  ))}
+              {product.skinType && Array.isArray(product.skinType) && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-2">Suitable for:</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {product.skinType.map((type: string, index: number) => (
+                      <span
+                        key={index}
+                        className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm capitalize"
+                      >
+                        {type} skin
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Quantity and Add to Cart */}
               <div className="flex items-center space-x-4 mb-8">
@@ -251,26 +263,26 @@ const ProductDetails: React.FC = () => {
 
                 <div className="min-h-32">
                   {activeTab === 'description' && (
-                    <p className="text-gray-600 leading-relaxed">{product.fullDescription}</p>
+                    <p className="text-gray-600 leading-relaxed">{product.fullDescription || product.description}</p>
                   )}
                   {activeTab === 'ingredients' && (
                     <div className="space-y-2">
-                      {product.ingredients.map((ingredient, index) => (
+                      {product.ingredients && Array.isArray(product.ingredients) ? product.ingredients.map((ingredient: string, index: number) => (
                         <div key={index} className="flex items-center space-x-2">
                           <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
                           <span className="text-gray-600">{ingredient}</span>
                         </div>
-                      ))}
+                      )) : <p className="text-gray-500 text-sm">Ingredient list not generated for this product.</p>}
                     </div>
                   )}
                   {activeTab === 'benefits' && (
                     <div className="space-y-2">
-                      {product.benefits.map((benefit, index) => (
+                      {product.benefits && Array.isArray(product.benefits) ? product.benefits.map((benefit: string, index: number) => (
                         <div key={index} className="flex items-center space-x-2">
                           <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
                           <span className="text-gray-600">{benefit}</span>
                         </div>
-                      ))}
+                      )) : <p className="text-gray-500 text-sm">No specific benefits listed.</p>}
                     </div>
                   )}
                 </div>

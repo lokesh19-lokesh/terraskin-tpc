@@ -20,14 +20,14 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 
 const AppContent = () => {
   const location = useLocation();
-  const isAuthPage = location.pathname.startsWith('/admin') || location.pathname === '/' || location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/login-about' || location.pathname === '/login-contact';
+  const isAuthPage = location.pathname.startsWith('/admin') || location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/login-about' || location.pathname === '/login-contact';
 
   return (
     <div className="min-h-screen bg-white">
       {!isAuthPage && <Header />}
       <main>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/login-about" element={
             <div className="relative">
               <Link to="/" className="absolute top-4 left-4 z-50 bg-[#8d4745] text-white px-4 py-2 rounded-full font-medium shadow-md hover:bg-[#7a3f3d] transition-colors">

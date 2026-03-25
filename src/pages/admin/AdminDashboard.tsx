@@ -51,7 +51,7 @@ const AdminDashboard: React.FC = () => {
 
         <div className="p-4 border-t border-gray-100 space-y-2">
           <button
-            onClick={() => navigate('/home')}
+            onClick={() => navigate('/')}
             className="w-full flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors font-medium"
           >
             <ArrowLeft className="h-5 w-5" />

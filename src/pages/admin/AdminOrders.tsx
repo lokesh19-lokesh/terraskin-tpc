@@ -93,7 +93,7 @@ const AdminOrders = () => {
                   {profiles[order.user_id] || 'Unknown User'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-gray-600 font-medium">
-                  ${order.total_amount}
+                  ₹{order.total_amount}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-gray-500 text-xs">
                   {new Date(order.created_at).toLocaleDateString()}

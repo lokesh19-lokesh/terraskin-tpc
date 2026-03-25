@@ -129,7 +129,7 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
 
   const navigation = [
-    { name: 'Home', href: '/home' },
+    { name: 'Home', href: '/' },
     { name: 'Shop', href: '/shop' },
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' }
@@ -178,12 +178,34 @@ const Header: React.FC = () => {
 
             {/* User icon */}
             {!isLoggedIn ? (
-              <Link
-                to="/login"
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+              <div
+                className="relative"
+                onMouseEnter={() => setUserMenuOpen(true)}
+                onMouseLeave={() => setUserMenuOpen(false)}
               >
-                <User className="h-5 w-5 text-gray-700" />
-              </Link>
+                <button className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
+                  <User className="h-5 w-5 text-gray-700" />
+                </button>
+
+                {userMenuOpen && (
+                  <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-32 z-50">
+                    <div className="bg-white shadow-lg rounded-md flex flex-col overflow-hidden border border-gray-100 divide-y divide-gray-100">
+                      <Link
+                        to="/login"
+                        className="block w-full text-center px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#8d4745] transition-colors"
+                      >
+                        Login
+                      </Link>
+                      <Link
+                        to="/signup"
+                        className="block w-full text-center px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#8d4745] transition-colors"
+                      >
+                        Sign Up
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               <div
                 className="relative"

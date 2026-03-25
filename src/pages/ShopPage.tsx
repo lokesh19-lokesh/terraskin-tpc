@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Filter, X } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import AnimatedSection from '../components/AnimatedSection';
-import { products } from '../data/products';
+import { supabase } from '../lib/supabase';
 import { FilterState } from '../types';
 
 const ShopPage: React.FC = () => {
@@ -13,6 +13,16 @@ const ShopPage: React.FC = () => {
     skinType: 'all',
     bestSellers: false
   });
+
+  const [products, setProducts] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const { data } = await supabase.from('products').select('*');
+      if (data) setProducts(data);
+    };
+    fetchProducts();
+  }, []);
 
   const categories = ['all', 'serums', 'moisturizers', 'cleansers', 'treatments', 'suncare'];
   const skinTypes = ['all', 'normal', 'dry', 'oily', 'sensitive', 'combination', 'mature', 'acne-prone'];
@@ -29,9 +39,11 @@ const ShopPage: React.FC = () => {
         return false;
       }
 
-      // Skin type filter
-      if (filters.skinType !== 'all' && !product.skinType.includes(filters.skinType)) {
-        return false;
+      // Skin type filter (safe check for older schema variants)
+      if (filters.skinType !== 'all') {
+         if (!product.skinType || !product.skinType.includes(filters.skinType)) {
+            return false;
+         }
       }
 
       // Best sellers filter
@@ -41,7 +53,7 @@ const ShopPage: React.FC = () => {
 
       return true;
     });
-  }, [filters]);
+  }, [filters, products]);
 
   const handleFilterChange = (key: keyof FilterState, value: any) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -251,8 +263,8 @@ const ShopPage: React.FC = () => {
             className="w-full accent-[#8d4745]"
           />
           <div className="flex justify-between text-sm text-gray-600">
-            <span>$0</span>
-            <span>${filters.priceRange[1]}</span>
+            <span>₹0</span>
+            <span>₹{filters.priceRange[1]}</span>
           </div>
         </div>
 
