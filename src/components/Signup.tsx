@@ -55,7 +55,7 @@ const Signup: React.FC = () => {
           to="/login"
           className="liquid-glass text-white rounded-full px-6 py-2.5 text-sm hover:scale-[1.03] transition-transform"
         >
-          Login
+          Back
         </Link>
       </nav>
 
