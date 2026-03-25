@@ -275,6 +275,7 @@ const Payment: React.FC = () => {
             contact: shippingAddress.mobile || "9999999999",
           },
           handler: async (response: any) => {
+            console.log("Razorpay sucess response:", response);
             try {
               if (!session?.user?.id) throw new Error("No active user session");
 
@@ -335,7 +336,12 @@ const Payment: React.FC = () => {
           return;
         }
 
+        console.log("Opening Razorpay with options:", options);
         const paymentObject = new window.Razorpay(options);
+        paymentObject.on('payment.failed', function (response: any) {
+          console.error("Payment failed listener:", response.error);
+          alert("Oops! Something went wrong.\n" + response.error.description);
+        });
         paymentObject.open();
       } else {
         toast.error("Razorpay SDK failed to load. Please try again later.");
