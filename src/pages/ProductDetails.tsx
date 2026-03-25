@@ -89,6 +89,9 @@ const ProductDetails: React.FC = () => {
                   src={imagesArray[currentImageIndex]}
                   alt={product.name}
                   className="w-full h-96 object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/4465831/pexels-photo-4465831.jpeg?auto=compress&cs=tinysrgb&w=800';
+                  }}
                 />
                 
                 {imagesArray.length > 1 && (
@@ -143,6 +146,9 @@ const ProductDetails: React.FC = () => {
                         src={image}
                         alt={`${product.name} ${index + 1}`}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/4465831/pexels-photo-4465831.jpeg?auto=compress&cs=tinysrgb&w=800';
+                        }}
                       />
                     </button>
                   ))}

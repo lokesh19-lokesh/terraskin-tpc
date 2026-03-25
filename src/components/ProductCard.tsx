@@ -24,6 +24,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             src={product.image_url || (product.images && product.images[0]) || 'https://images.pexels.com/photos/4465831/pexels-photo-4465831.jpeg?auto=compress&cs=tinysrgb&w=800'}
             alt={product.name}
             className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/4465831/pexels-photo-4465831.jpeg?auto=compress&cs=tinysrgb&w=800';
+            }}
           />
         </Link>
         

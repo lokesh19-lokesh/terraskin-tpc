@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Edit2, Save, X, Database } from 'lucide-react';
+import { Plus, Edit2, X, Database, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { products as mockProducts } from '../../data/products';
 
@@ -9,10 +9,17 @@ const AdminProducts = () => {
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   
-  // Temporary edit states
+  // Edit Modal states
+  const [showEditModal, setShowEditModal] = useState(false);
   const [editName, setEditName] = useState("");
   const [editPrice, setEditPrice] = useState("");
   const [editStock, setEditStock] = useState("");
+  const [editCategory, setEditCategory] = useState("");
+  const [editImageUrl, setEditImageUrl] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editFile, setEditFile] = useState<File | null>(null);
+  const [editPreview, setEditPreview] = useState<string | null>(null);
+  const [useEditUpload, setUseEditUpload] = useState(false);
 
   // Add Product Modal states
   const [showAddModal, setShowAddModal] = useState(false);
@@ -22,6 +29,22 @@ const AdminProducts = () => {
   const [newCategory, setNewCategory] = useState("serums");
   const [newImageUrl, setNewImageUrl] = useState("");
   const [newDescription, setNewDescription] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+  const [useUpload, setUseUpload] = useState(true);
+
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const fixImageUrl = (url: string) => {
+    if (url.includes('drive.google.com/file/d/')) {
+      const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if (match && match[1]) {
+        return `https://lh3.googleusercontent.com/u/0/d/${match[1]}`;
+      }
+    }
+    return url;
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -44,39 +67,130 @@ const AdminProducts = () => {
     setEditName(product.name);
     setEditPrice(product.price.toString());
     setEditStock(product.stock_quantity.toString());
+    setEditCategory(product.category);
+    setEditImageUrl(product.image_url || "");
+    setEditDescription(product.description || "");
+    setEditPreview(product.image_url || "");
+    setShowEditModal(true);
   };
 
-  const handleSave = async (id: string) => {
+  const handleEditFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setEditFile(file);
+      setEditPreview(URL.createObjectURL(file));
+      setUseEditUpload(true);
+    }
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingId) return;
+    setUploading(true);
     try {
+      let finalImageUrl = editImageUrl;
+
+      if (useEditUpload && editFile) {
+        const fileExt = editFile.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('product-images')
+          .upload(filePath, editFile);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('product-images')
+          .getPublicUrl(filePath);
+
+        finalImageUrl = publicUrl;
+      } else {
+        finalImageUrl = fixImageUrl(editImageUrl);
+      }
+
       const { error } = await supabase
         .from('products')
         .update({
           name: editName,
           price: parseFloat(editPrice),
-          stock_quantity: parseInt(editStock, 10)
+          stock_quantity: parseInt(editStock, 10),
+          category: editCategory,
+          image_url: finalImageUrl,
+          description: editDescription
         })
-        .eq('id', id);
+        .eq('id', editingId);
 
       if (error) throw error;
       
-      toast.success("Product updated securely");
+      toast.success("Product updated successfully");
+      setShowEditModal(false);
       setEditingId(null);
+      setEditFile(null);
+      setEditPreview(null);
       fetchProducts();
     } catch (error: any) {
-      toast.error("Failed to execute update: " + error.message);
+      toast.error("Failed to update product: " + error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDeleteProduct = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this product? This cannot be undone.")) return;
+    try {
+      const { error } = await supabase.from('products').delete().eq('id', id);
+      if (error) throw error;
+      toast.success("Product deleted successfully");
+      fetchProducts();
+    } catch (error: any) {
+      toast.error("Failed to delete product: " + error.message);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setUploadPreview(URL.createObjectURL(file));
     }
   };
 
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
+    setUploading(true);
     try {
+      let finalImageUrl = newImageUrl;
+
+      // Handle direct file upload to Supabase Storage
+      if (useUpload && imageFile) {
+        const fileExt = imageFile.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: uploadError, data } = await supabase.storage
+          .from('product-images')
+          .upload(filePath, imageFile);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('product-images')
+          .getPublicUrl(filePath);
+
+        finalImageUrl = publicUrl;
+      } else {
+        finalImageUrl = fixImageUrl(newImageUrl);
+      }
+
       const { error } = await supabase.from('products').insert([
         {
           name: newName,
           price: parseFloat(newPrice),
           stock_quantity: parseInt(newStock, 10),
           category: newCategory,
-          image_url: newImageUrl,
+          image_url: finalImageUrl,
           description: newDescription || "Premium Skincare Product"
         }
       ]);
@@ -90,9 +204,13 @@ const AdminProducts = () => {
       setNewStock("");
       setNewImageUrl("");
       setNewDescription("");
+      setImageFile(null);
+      setUploadPreview(null);
       fetchProducts();
     } catch (error: any) {
       toast.error("Failed to add product: " + error.message);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -154,32 +272,32 @@ const AdminProducts = () => {
           <tbody className="bg-white divide-y divide-gray-200">
             {products.map(product => (
               <tr key={product.id}>
-                <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                  {editingId === product.id ? (
-                    <input type="text" value={editName} onChange={e => setEditName(e.target.value)} className="border p-1 w-full rounded" />
-                  ) : product.name}
+                 <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                  {product.name}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                  {editingId === product.id ? (
-                    <input type="number" step="0.01" value={editPrice} onChange={e => setEditPrice(e.target.value)} className="border p-1 w-24 rounded" />
-                  ) : `₹${product.price}`}
+                  ₹{product.price}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                  {editingId === product.id ? (
-                    <input type="number" value={editStock} onChange={e => setEditStock(e.target.value)} className="border p-1 w-20 rounded" />
-                  ) : product.stock_quantity}
+                  {product.stock_quantity}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right font-medium">
-                  {editingId === product.id ? (
-                    <div className="flex justify-end gap-2">
-                       <button onClick={() => handleSave(product.id)} className="text-green-600 hover:text-green-900 p-1"><Save size={18} /></button>
-                       <button onClick={() => setEditingId(null)} className="text-gray-400 hover:text-gray-600 p-1"><X size={18} /></button>
-                    </div>
-                  ) : (
-                    <button onClick={() => handleEditInit(product)} className="text-[#8d4745] hover:text-[#7a3f3d] p-1 transition-colors">
-                      <Edit2 size={18} />
+                  <div className="flex justify-end gap-3">
+                    <button 
+                      onClick={() => handleEditInit(product)} 
+                      className="text-[#8d4745] hover:text-[#7a3f3d] p-1.5 bg-gray-50 rounded-lg transition-colors border border-gray-100"
+                      title="Full Edit"
+                    >
+                      <Edit2 size={16} />
                     </button>
-                  )}
+                    <button 
+                      onClick={() => handleDeleteProduct(product.id)} 
+                      className="text-red-500 hover:text-red-700 p-1.5 bg-red-50 rounded-lg transition-colors border border-red-100"
+                      title="Delete Product"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -191,6 +309,67 @@ const AdminProducts = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Edit Product Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+            <div className="flex justify-between items-center p-6 border-b">
+              <h2 className="text-2xl font-bold font-['Instrument_Serif'] text-[#8d4745]">Edit Product</h2>
+              <button onClick={() => setShowEditModal(false)} className="text-gray-400 hover:text-gray-600"><X size={24} /></button>
+            </div>
+            <form onSubmit={handleUpdate} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                <input type="text" required value={editName} onChange={e => setEditName(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" />
+              </div>
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
+                  <input type="number" step="0.01" required value={editPrice} onChange={e => setEditPrice(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+                  <input type="number" required value={editStock} onChange={e => setEditStock(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <select value={editCategory} onChange={e => setEditCategory(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none">
+                  <option value="serums">Serums</option>
+                  <option value="moisturizers">Moisturizers</option>
+                  <option value="cleansers">Cleansers</option>
+                  <option value="treatments">Treatments</option>
+                  <option value="suncare">Suncare</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <label className="block text-sm font-medium text-gray-700">Change Image</label>
+                  <button type="button" onClick={() => setUseEditUpload(!useEditUpload)} className="text-xs text-[#8d4745] hover:underline">
+                    {useEditUpload ? "Back to Current" : "Upload New"}
+                  </button>
+                </div>
+                {useEditUpload ? (
+                  <div onClick={() => fileInputRef.current?.click()} className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-[#8d4745] cursor-pointer bg-gray-50 h-32 flex flex-col items-center justify-center">
+                    <input type="file" ref={fileInputRef} onChange={handleEditFileChange} className="hidden" accept="image/*" />
+                    {editPreview ? <img src={editPreview} className="h-full w-full object-contain" /> : <Upload size={24} className="text-gray-400" />}
+                  </div>
+                ) : (
+                  <input type="url" value={editImageUrl} onChange={e => setEditImageUrl(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" />
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea value={editDescription} onChange={e => setEditDescription(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" rows={2} />
+              </div>
+              <button disabled={uploading} type="submit" className="w-full bg-[#8d4745] text-white py-3 rounded-lg hover:bg-[#7a3f3d] font-medium transition-colors mt-4">
+                {uploading ? "Saving Changes..." : "Save All Changes"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Add Product Modal */}
       {showAddModal && (
@@ -225,17 +404,74 @@ const AdminProducts = () => {
                   <option value="suncare">Suncare</option>
                 </select>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                <input type="url" value={newImageUrl} onChange={e => setNewImageUrl(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" placeholder="https://example.com/image.png" />
-                <p className="text-[10px] text-gray-500 mt-1">Note: Use direct image links (ending in .jpg/png) for best results.</p>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <label className="block text-sm font-medium text-gray-700">Product Image</label>
+                  <button 
+                    type="button" 
+                    onClick={() => setUseUpload(!useUpload)}
+                    className="text-xs text-[#8d4745] hover:underline"
+                  >
+                    {useUpload ? "Switch to URL" : "Switch to Upload"}
+                  </button>
+                </div>
+
+                {useUpload ? (
+                  <div 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-[#8d4745] cursor-pointer transition-colors bg-gray-50 h-32 flex flex-col items-center justify-center overflow-hidden"
+                  >
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      onChange={handleFileChange} 
+                      className="hidden" 
+                      accept="image/*" 
+                    />
+                    {uploadPreview ? (
+                      <img src={uploadPreview} alt="Preview" className="h-full w-full object-contain" />
+                    ) : (
+                      <div className="flex flex-col items-center text-gray-400">
+                        <Upload size={24} className="mb-1" />
+                        <span className="text-xs uppercase font-bold tracking-tight">Drop photo here or Click</span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div>
+                    <input 
+                      type="url" 
+                      value={newImageUrl} 
+                      onChange={e => setNewImageUrl(e.target.value)} 
+                      className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" 
+                      placeholder="https://example.com/image.png" 
+                    />
+                  </div>
+                )}
+                <p className="text-[10px] text-gray-500">Note: Use JPG/PNG files for professional storefront results.</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea value={newDescription} onChange={e => setNewDescription(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" rows={3} placeholder="Describe the benefits..." />
+                <textarea value={newDescription} onChange={e => setNewDescription(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" rows={2} placeholder="Describe the benefits..." />
               </div>
-              <button type="submit" className="w-full bg-[#8d4745] text-white py-3 rounded-lg hover:bg-[#7a3f3d] font-medium transition-colors mt-4">
-                Deploy Product to Store
+              <button 
+                type="submit" 
+                disabled={uploading}
+                className={`w-full text-white py-3 rounded-lg font-medium transition-colors mt-4 flex items-center justify-center gap-2 ${
+                  uploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#8d4745] hover:bg-[#7a3f3d]'
+                }`}
+              >
+                {uploading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/50 border-t-white" />
+                    Deploying...
+                  </>
+                ) : (
+                  <>
+                    <ImageIcon size={18} />
+                    Deploy Product to Store
+                  </>
+                )}
               </button>
             </form>
           </div>
