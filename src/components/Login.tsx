@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../images/terra-skin-logo.png";
 import { ToastContainer, toast } from "react-toastify";
+import { supabase } from "../lib/supabase";
 import "react-toastify/dist/ReactToastify.css";
 
 const Login: React.FC = () => {
@@ -10,48 +11,29 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const savedUser = localStorage.getItem("user");
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (savedUser) {
-      const parsedUser = JSON.parse(savedUser);
+      if (error) throw error;
 
-      if (parsedUser.email === email && parsedUser.password === password) {
-        localStorage.setItem("loggedIn", "true");
+      localStorage.setItem("loggedIn", "true");
+      
+      toast.success("Login successful!", {
+        position: "top-right",
+        autoClose: 2000,
+      });
 
-        // Extract name from email (before @)
-        const name = email.split("@")[0];
-
-        // Track login history in localStorage
-        const loginHistory = JSON.parse(localStorage.getItem("loginHistory") || "[]");
-
-        if (!loginHistory.includes(email)) {
-          // New user login
-          toast.success(`🎉 Welcome ${name} to TerraSkin!`, {
-            position: "top-right",
-            autoClose: 3000,
-          });
-          loginHistory.push(email);
-          localStorage.setItem("loginHistory", JSON.stringify(loginHistory));
-        } else {
-          // Returning user
-          toast.info(`👋 Welcome back ${name} to TerraSkin!`, {
-            position: "top-right",
-            autoClose: 3000,
-          });
-        }
-
-        // Redirect after short delay
-        setTimeout(() => {
-          navigate("/home");
-        }, 1500);
-      } else {
-        toast.error("❌ Invalid credentials", { position: "top-right", autoClose: 3000 });
-      }
-    } else {
-      toast.error("⚠️ No account found. Please sign up first.", {
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
+    } catch (error: any) {
+      toast.error(error.message || "Invalid credentials", {
         position: "top-right",
         autoClose: 3000,
       });

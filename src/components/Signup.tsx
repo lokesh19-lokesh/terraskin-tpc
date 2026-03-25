@@ -2,29 +2,48 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../images/terra-skin-logo.png";
 import { ToastContainer, toast } from "react-toastify";
+import { supabase } from "../lib/supabase";
 import "react-toastify/dist/ReactToastify.css";
 
 const Signup: React.FC = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [gender, setGender] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Save user to localStorage (replace with API call in real app)
-    localStorage.setItem("user", JSON.stringify({ email, password }));
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            phone_number: phone,
+            gender: gender
+          }
+        }
+      });
 
-    // Show toast notification
-    toast.success("Signup successful! Please log in.", {
-      position: "top-right",
-      autoClose: 3000,
-    });
+      if (error) throw error;
 
-    // Redirect after a short delay to allow toast to show
-    setTimeout(() => {
-      navigate("/login");
-    }, 1500);
+      toast.success("Signup successful! You can now log in.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+    } catch (error: any) {
+      toast.error(error.message || "Error signing up", { position: "top-right" });
+    }
   };
 
   return (
@@ -64,17 +83,61 @@ const Signup: React.FC = () => {
         
         <div className="liquid-glass w-full max-w-md p-8 rounded-2xl animate-fade-rise">
           <h2 className="text-3xl text-white font-['Instrument_Serif'] mb-6 text-center">Join TerraSkin</h2>
-          <form onSubmit={handleSignup} className="space-y-5 text-left">
+          <form onSubmit={handleSignup} className="space-y-4 text-left">
+            <div className="flex gap-4">
+              <input
+                type="text"
+                placeholder="First Name"
+                className="w-1/2 p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/70 focus:outline-none focus:border-white/50"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+              <input
+                type="text"
+                placeholder="Last Name"
+                className="w-1/2 p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/70 focus:outline-none focus:border-white/50"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+            </div>
+            
+            <div>
+              <input
+                type="tel"
+                placeholder="Phone Number"
+                className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/70 focus:outline-none focus:border-white/50"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
+            </div>
+
+            <div>
+              <select
+                className="w-full p-3 bg-[#111] border border-white/20 rounded-lg text-white focus:outline-none focus:border-white/50 appearance-none bg-opacity-80"
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                required
+              >
+                <option value="" disabled>Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+
             <div>
               <input
                 type="email"
-                placeholder="Email"
+                placeholder="Email Address"
                 className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/70 focus:outline-none focus:border-white/50"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
+            
             <div>
               <input
                 type="password"
@@ -85,9 +148,10 @@ const Signup: React.FC = () => {
                 required
               />
             </div>
+
             <button
               type="submit"
-              className="w-full bg-white/20 hover:bg-white/30 text-white font-medium py-3 rounded-lg transition-colors border border-white/20"
+              className="w-full bg-white/20 hover:bg-white/30 text-white font-medium py-3 rounded-lg transition-colors border border-white/20 mt-2"
             >
               Sign Up
             </button>
