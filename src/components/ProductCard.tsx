@@ -57,7 +57,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Quick add to cart */}
         <button
           onClick={handleAddToCart}
-          className="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-[#8d4745] text-white px-4 py-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-[#7a3f3d] flex items-center space-x-2"
+          className="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-[#8d4745] text-white px-4 py-2 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 hover:bg-[#7a3f3d] flex items-center space-x-2 shadow-lg whitespace-nowrap"
         >
           <ShoppingCart className="h-4 w-4" />
           <span className="text-sm font-medium">Add to Cart</span>

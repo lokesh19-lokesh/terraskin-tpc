@@ -52,11 +52,11 @@ const AdminDashboard: React.FC = () => {
       <div className="w-full md:w-64 bg-white shadow-xl flex flex-col z-20">
         <div className="p-4 border-b border-gray-100 flex items-center justify-center">
           <Link to="/" className="flex items-center">
-            <img src={logo} alt="TerraSkin Logo" className="h-16 w-auto" />
+            <img src={logo} alt="TerraSkin Logo" className="h-12 md:h-16 w-auto" />
           </Link>
         </div>
         
-        <nav className="flex-1 p-4 flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-visible no-scrollbar">
+        <nav className="p-4 flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-visible no-scrollbar border-b md:border-b-0 border-gray-100">
           <button
             onClick={() => setActiveTab('products')}
             className={`flex-shrink-0 flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-lg transition-colors font-medium text-sm md:text-base ${
@@ -88,10 +88,10 @@ const AdminDashboard: React.FC = () => {
           </button>
         </nav>
 
-        <div className="p-4 border-t border-gray-100 space-y-2">
+        <div className="p-4 md:border-t border-gray-100 mt-auto">
           <button
             onClick={() => navigate('/')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors font-medium"
+            className="w-full flex items-center justify-center md:justify-start gap-3 px-4 py-3 text-[#8d4745] hover:bg-gray-100 rounded-lg transition-colors font-bold text-sm"
           >
             <ArrowLeft className="h-5 w-5" />
             Back to Site
@@ -100,8 +100,8 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 p-8 overflow-y-auto">
-        <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-sm border border-gray-100 p-8 min-h-[calc(100vh-4rem)]">
+      <div className="flex-1 p-4 md:p-8 overflow-y-auto">
+        <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-8 min-h-[calc(100vh-4rem)]">
           {activeTab === 'products' && <AdminProducts />}
           {activeTab === 'users' && <AdminUsers />}
           {activeTab === 'orders' && <AdminOrders />}

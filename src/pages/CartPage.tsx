@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import AnimatedSection from '../components/AnimatedSection';
-import PlaceOrderPage from './PlaceOrderPage';
 
 const CartPage: React.FC = () => {
   const { state, dispatch } = useCart();
@@ -59,51 +58,58 @@ const CartPage: React.FC = () => {
           <div className="lg:col-span-2 space-y-4">
             {state.items.map((item, index) => (
               <AnimatedSection key={item.id} delay={index * 100} animation="slide-up">
-                <div className="bg-white p-6 rounded-lg shadow-sm">
-                  <div className="flex items-center space-x-4">
-                    <Link to={`/product/${item.id}`} className="flex-shrink-0">
-                      <img
-                        src={item.images[0]}
-                        alt={item.name}
-                        className="w-20 h-20 object-cover rounded-lg"
-                      />
-                    </Link>
-                    
-                    <div className="flex-1 min-w-0">
-                      <Link to={`/product/${item.id}`}>
-                        <h3 className="text-lg font-semibold text-gray-900 hover:text-[#8d4745] transition-colors duration-200">
-                          {item.name}
-                        </h3>
+                <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-100">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+                    <div className="flex items-center gap-4 w-full">
+                      <Link to={`/product/${item.id}`} className="flex-shrink-0">
+                        <img
+                          src={item.image_url || (item.images && item.images[0]) || 'https://images.pexels.com/photos/4465831/pexels-photo-4465831.jpeg?auto=compress&cs=tinysrgb&w=800'}
+                          alt={item.name}
+                          className="w-20 h-20 object-cover rounded-lg"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/4465831/pexels-photo-4465831.jpeg?auto=compress&cs=tinysrgb&w=800';
+                          }}
+                        />
                       </Link>
-                      <p className="text-gray-600 text-sm mt-1">{item.description}</p>
-                      <p className="text-lg font-bold text-[#8d4745] mt-2">₹{item.price}</p>
+                      
+                      <div className="flex-1 min-w-0">
+                        <Link to={`/product/${item.id}`}>
+                          <h3 className="text-base sm:text-lg font-semibold text-gray-900 hover:text-[#8d4745] transition-colors duration-200 truncate">
+                            {item.name}
+                          </h3>
+                        </Link>
+                        <p className="text-[#8d4745] font-bold text-lg mt-1">₹{item.price}</p>
+                      </div>
                     </div>
                     
-                    <div className="flex items-center space-x-3">
-                      <button
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors duration-200"
-                        disabled={item.quantity <= 1}
-                      >
-                        <Minus className="h-4 w-4" />
-                      </button>
+                    <div className="flex items-center justify-between w-full sm:w-auto sm:space-x-4 bg-gray-50 sm:bg-transparent p-2 sm:p-0 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          className="w-8 h-8 rounded-full bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors duration-200"
+                          disabled={item.quantity <= 1}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </button>
+                        
+                        <span className="w-8 text-center font-bold text-gray-900">{item.quantity}</span>
+                        
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          className="w-8 h-8 rounded-full bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors duration-200"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </button>
+                      </div>
                       
-                      <span className="w-8 text-center font-medium">{item.quantity}</span>
-                      
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors duration-200"
+                        onClick={() => removeItem(item.id)}
+                        className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors duration-200 group"
+                        title="Remove Item"
                       >
-                        <Plus className="h-4 w-4" />
+                        <Trash2 className="h-5 w-5 group-hover:scale-110 transition-transform" />
                       </button>
                     </div>
-                    
-                    <button
-                      onClick={() => removeItem(item.id)}
-                      className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors duration-200"
-                    >
-                      <Trash2 className="h-5 w-5" />
-                    </button>
                   </div>
                 </div>
               </AnimatedSection>

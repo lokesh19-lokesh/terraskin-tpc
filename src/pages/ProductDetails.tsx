@@ -88,7 +88,7 @@ const ProductDetails: React.FC = () => {
                 <img
                   src={imagesArray[currentImageIndex]}
                   alt={product.name}
-                  className="w-full h-96 object-cover"
+                  className="w-full aspect-square sm:h-96 object-cover"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/4465831/pexels-photo-4465831.jpeg?auto=compress&cs=tinysrgb&w=800';
                   }}

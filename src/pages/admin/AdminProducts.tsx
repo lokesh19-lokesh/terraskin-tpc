@@ -239,9 +239,9 @@ const AdminProducts = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8 border-b pb-4">
-        <h1 className="text-3xl font-bold text-gray-900">Product Management</h1>
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 border-b pb-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 font-['Playfair_Display']">Product Management</h1>
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           {products.length === 0 && !loading && (
             <button 
               onClick={handleSeedDatabase}
@@ -259,8 +259,8 @@ const AdminProducts = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200 text-sm">
+      <div className="overflow-x-auto bg-white rounded-lg border border-gray-200 shadow-sm -mx-4 sm:mx-0 mb-6">
+        <table className="min-w-[800px] w-full divide-y divide-gray-200 text-sm">
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Product</th>

@@ -48,12 +48,12 @@ const AdminUsers = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8 border-b pb-4">
-        <h1 className="text-3xl font-bold text-gray-900">User Security & Profiles</h1>
+      <div className="flex justify-between items-center mb-6 sm:mb-8 border-b pb-4">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 font-['Playfair_Display']">User Security & Profiles</h1>
       </div>
 
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200 text-sm">
+      <div className="overflow-x-auto bg-white rounded-lg border border-gray-200 shadow-sm -mx-4 sm:mx-0 mb-6">
+        <table className="min-w-[800px] w-full divide-y divide-gray-200 text-sm">
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">User UID</th>
