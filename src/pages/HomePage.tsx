@@ -4,7 +4,9 @@ import { Star, Award, Leaf, Heart } from 'lucide-react';
 import HeroSlider from '../components/HeroSlider';
 import ProductCard from '../components/ProductCard';
 import AnimatedSection from '../components/AnimatedSection';
-import { products, testimonials } from '../data/products';
+import { testimonials } from '../data/products';
+import { supabase } from '../lib/supabase';
+import { Product } from '../types';
 import acne from "../images/shop-1.webp";
 import antiAgeing from "../images/shop-2.jpg";
 import hydration from "../images/shop-3.jpg";
@@ -34,8 +36,35 @@ import c4 from "../images/why-4.webp";
 
 
 const HomePage: React.FC = () => {
-  const featuredProducts = products.filter(product => product.isNew || product.isBestSeller).slice(0, 4);
-  const bestSellers = products.filter(product => product.isBestSeller).slice(0, 4);
+  const [featuredProducts, setFeaturedProducts] = React.useState<Product[]>([]);
+  const [bestSellers, setBestSellers] = React.useState<Product[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchHomeProducts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (data) {
+          // For demo/simplicity, using newly added as bestSellers/featured
+          // if you want official flags, add is_new/is_bestseller to DB later
+          setFeaturedProducts(data.slice(0, 4));
+          setBestSellers(data.slice(0, 4));
+        }
+      } catch (err) {
+        console.error('Error fetching home products:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHomeProducts();
+  }, []);
 
   const concerns = [
     { id: 1, img: acne, label: "ACNE-PRONED SKIN" },
@@ -207,11 +236,17 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {featuredProducts.map((product, index) => (
-              <AnimatedSection key={product.id} delay={index * 100} animation="slide-up">
-                <ProductCard product={product} />
-              </AnimatedSection>
-            ))}
+            {isLoading ? (
+              [...Array(4)].map((_, i) => (
+                <div key={i} className="bg-gray-200 animate-pulse h-80 rounded-lg"></div>
+              ))
+            ) : (
+              featuredProducts.map((product, index) => (
+                <AnimatedSection key={product.id} delay={index * 100} animation="slide-up">
+                  <ProductCard product={product} />
+                </AnimatedSection>
+              ))
+            )}
           </div>
 
           <div className="text-center">
@@ -326,11 +361,17 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {bestSellers.map((product, index) => (
-              <AnimatedSection key={product.id} delay={index * 100} animation="slide-up">
-                <ProductCard product={product} />
-              </AnimatedSection>
-            ))}
+            {isLoading ? (
+              [...Array(4)].map((_, i) => (
+                <div key={i} className="bg-gray-200 animate-pulse h-80 rounded-lg"></div>
+              ))
+            ) : (
+              bestSellers.map((product, index) => (
+                <AnimatedSection key={product.id} delay={index * 100} animation="slide-up">
+                  <ProductCard product={product} />
+                </AnimatedSection>
+              ))
+            )}
           </div>
         </div>
       </AnimatedSection>
