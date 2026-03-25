@@ -29,8 +29,25 @@ const Login: React.FC = () => {
         autoClose: 2000,
       });
 
+      // Verification fetch to auto-route superadmins
+      let isAdmin = false;
+      if (data?.user?.id) {
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', data.user.id)
+            .single();
+          if (profile && profile.role === 'admin') {
+            isAdmin = true;
+          }
+        } catch (err) {
+          console.error("Profile routing check failed", err);
+        }
+      }
+
       setTimeout(() => {
-        navigate("/home");
+        navigate(isAdmin ? "/admin" : "/home");
       }, 1000);
     } catch (error: any) {
       toast.error(error.message || "Invalid credentials", {

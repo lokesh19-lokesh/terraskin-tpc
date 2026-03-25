@@ -15,10 +15,12 @@ import PlaceOrderPage from './pages/PlaceOrderPage';
 import "react-toastify/dist/ReactToastify.css";
 import Payment from './pages/Payment';
 import Orders from "./components/Orders";
+import AdminRoute from './components/AdminRoute';
+import AdminDashboard from './pages/admin/AdminDashboard';
 
 const AppContent = () => {
   const location = useLocation();
-  const isAuthPage = location.pathname === '/' || location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/login-about' || location.pathname === '/login-contact';
+  const isAuthPage = location.pathname.startsWith('/admin') || location.pathname === '/' || location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/login-about' || location.pathname === '/login-contact';
 
   return (
     <div className="min-h-screen bg-white">
@@ -53,6 +55,11 @@ const AppContent = () => {
           <Route path='/PlaceOrderPage' element={<PlaceOrderPage/>}/>
           <Route path='/payment' element={<Payment/>} />
           <Route path="/orders" element={<Orders />} />
+
+          {/* Secure Admin Portal */}
+          <Route path="/admin" element={<AdminRoute />}>
+            <Route path="" element={<AdminDashboard />} />
+          </Route>
         </Routes>
       </main>
       {!isAuthPage && <Footer />}
