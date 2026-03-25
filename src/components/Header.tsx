@@ -141,6 +141,7 @@ const Header: React.FC = () => {
 
   const [session, setSession] = useState<Session | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState<string | null>(null);
 
   React.useEffect(() => {
     // 1. Initial session check
@@ -167,10 +168,13 @@ const Header: React.FC = () => {
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
       .from('profiles')
-      .select('role')
+      .select('role, first_name')
       .eq('id', userId)
       .single();
-    if (data) setUserRole(data.role);
+    if (data) {
+      setUserRole(data.role);
+      setFirstName(data.first_name);
+    }
   };
 
   const handleLogout = async () => {
@@ -253,8 +257,13 @@ const Header: React.FC = () => {
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-32 z-50">
+                  <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-36 z-50">
                     <div className="bg-white shadow-lg rounded-md flex flex-col overflow-hidden border border-gray-100 divide-y divide-gray-100">
+                      {firstName && (
+                        <div className="px-4 py-2.5 text-xs font-bold text-gray-400 uppercase tracking-wider text-center bg-gray-50/50">
+                          Welcome, {firstName}
+                        </div>
+                      )}
                       <Link
                         to="/orders"
                         className="block w-full text-center px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#8d4745] transition-colors"
