@@ -195,8 +195,14 @@ const Header: React.FC = () => {
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-28 z-50">
-                    <div className="bg-white shadow-lg rounded-md flex flex-col overflow-hidden border border-gray-100">
+                  <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-32 z-50">
+                    <div className="bg-white shadow-lg rounded-md flex flex-col overflow-hidden border border-gray-100 divide-y divide-gray-100">
+                      <Link
+                        to="/orders"
+                        className="block w-full text-center px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#8d4745] transition-colors"
+                      >
+                        My Orders
+                      </Link>
                       <button
                         onClick={handleLogout}
                         className="block w-full text-center px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#8d4745] transition-colors"
