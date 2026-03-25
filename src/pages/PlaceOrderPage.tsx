@@ -24,7 +24,7 @@ const PlaceOrderPage: React.FC = () => {
     localStorage.setItem("shippingAddress", JSON.stringify(formData));
 
     // ✅ Navigate to Payment Page
-    navigate("/Payment");
+    navigate("/payment");
   };
 
   return (

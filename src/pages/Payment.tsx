@@ -139,6 +139,8 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { supabase } from "../lib/supabase";
+import { Session } from "@supabase/supabase-js";
 
 declare global {
   interface Window {
@@ -162,24 +164,41 @@ interface OrderItem {
   quantity: number;
 }
 
-interface Order {
-  id: string;
-  items: OrderItem[];
-  total: number;
-  address: ShippingAddress;
-  date: string;
-}
+// interface Order {
+//   id: string;
+//   items: OrderItem[];
+//   total: number;
+//   address: ShippingAddress;
+//   date: string;
+// }
 
 const Payment: React.FC = () => {
   const navigate = useNavigate();
-  const { state, clearCart } = useCart();
-  const shippingAddress: ShippingAddress = JSON.parse(
-    localStorage.getItem("shippingAddress") || "{}"
-  );
+  const { state, dispatch } = useCart();
+  const [session, setSession] = React.useState<Session | null>(null);
+  
+  const shippingAddress: ShippingAddress = React.useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem("shippingAddress") || "{}");
+    } catch (e) {
+      console.error("Failed to parse shipping address", e);
+      return {} as ShippingAddress; // Return an empty object cast to ShippingAddress
+    }
+  }, []);
+
+  React.useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session: s } }) => {
+      setSession(s);
+      if (!s) {
+        toast.warning("Please login to complete your order");
+        navigate("/login");
+      }
+    });
+  }, [navigate]);
 
   const subtotal = state.total;
   const tax = subtotal * 0.08;
-  const total = subtotal + tax;
+  const total = parseFloat((subtotal + tax).toFixed(2));
 
   // const handlePayment = () => {
   //   const script = document.createElement("script");
@@ -255,31 +274,66 @@ const Payment: React.FC = () => {
             name: shippingAddress.name || "Guest",
             contact: shippingAddress.mobile || "9999999999",
           },
-          handler: (response: any) => {
-            const order = {
-              id: response.razorpay_payment_id,
-              items: state.items || [],
-              total: total,
-              address: shippingAddress,
-              date: new Date().toLocaleString(),
-            };
+          handler: async (response: any) => {
+            try {
+              if (!session?.user?.id) throw new Error("No active user session");
 
-            // Save order to localStorage
-            const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
-            existingOrders.push(order);
-            localStorage.setItem("orders", JSON.stringify(existingOrders));
+              // 1. Create the order in Supabase
+              const { data: orderData, error: orderError } = await supabase
+                .from('orders')
+                .insert({
+                  user_id: session.user.id,
+                  total_amount: total,
+                  status: 'processing',
+                  shipping_address: shippingAddress,
+                  payment_id: response.razorpay_payment_id,
+                  payment_method: 'razorpay',
+                  payment_status: 'paid'
+                })
+                .select()
+                .single();
 
-            // Show success toast
-            toast.success(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
+              if (orderError) throw orderError;
 
-            // Use setTimeout to ensure cart clears and navigation works
-            setTimeout(() => {
-              clearCart(); // ✅ clear cart
-              navigate("/orders"); // ✅ go to orders page
-            }, 500);
+              // 2. Create order items
+              const orderItems = state.items.map(item => ({
+                order_id: orderData.id,
+                product_id: item.id,
+                quantity: item.quantity,
+                price_at_purchase: item.price
+              }));
+
+              const { error: itemsError } = await supabase
+                .from('order_items')
+                .insert(orderItems);
+
+              if (itemsError) throw itemsError;
+
+              // ✅ Show success toast
+              toast.success(`Order Placed! ID: ${response.razorpay_payment_id}`);
+
+              // ✅ Clear cart and move on
+              setTimeout(() => {
+                dispatch({ type: 'CLEAR_CART' });
+                navigate("/orders");
+              }, 1500);
+            } catch (err: any) {
+              console.error("Order creation failed:", err);
+              toast.error("Payment was successful, but we failed to save your order details. Please contact support.");
+            }
+          },
+          modal: {
+            ondismiss: function() {
+              toast.info("Payment cancelled.");
+            }
           },
           theme: { color: "#8d4745" },
         };
+
+        if (total <= 0) {
+          toast.error("Total amount must be greater than 0");
+          return;
+        }
 
         const paymentObject = new window.Razorpay(options);
         paymentObject.open();
