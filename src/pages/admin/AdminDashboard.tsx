@@ -1,50 +1,89 @@
 import React, { useState } from 'react';
+import { supabase } from '../../lib/supabase';
 import { Package, Users, ShoppingCart, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import AdminProducts from './AdminProducts';
 import AdminUsers from './AdminUsers';
 import AdminOrders from './AdminOrders';
+import logo from "../../images/terra-skin-logo.png";
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'products' | 'users' | 'orders'>('products');
+  const [checking, setChecking] = useState(true);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const checkAdmin = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/login');
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
+
+      if (!profile || profile.role !== 'admin') {
+        navigate('/home');
+      } else {
+        setChecking(false);
+      }
+    };
+    checkAdmin();
+  }, [navigate]);
+
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center font-['Inter']">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#8d4745] border-t-transparent mx-auto mb-4" />
+          <p className="text-gray-600 font-medium">Verifying Permissions...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Sidebar */}
-      <div className="w-full md:w-64 bg-white shadow-xl flex flex-col">
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-          <h2 className="text-2xl font-['Instrument_Serif'] text-[#8d4745]">TerraControl</h2>
+      <div className="w-full md:w-64 bg-white shadow-xl flex flex-col z-20">
+        <div className="p-4 border-b border-gray-100 flex items-center justify-center">
+          <Link to="/" className="flex items-center">
+            <img src={logo} alt="TerraSkin Logo" className="h-16 w-auto" />
+          </Link>
         </div>
         
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-visible no-scrollbar">
           <button
             onClick={() => setActiveTab('products')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors font-medium ${
+            className={`flex-shrink-0 flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-lg transition-colors font-medium text-sm md:text-base ${
               activeTab === 'products' ? 'bg-[#8d4745] text-white' : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
-            <Package className="h-5 w-5" />
+            <Package className="h-4 w-4 md:h-5 md:w-5" />
             Products
           </button>
           
           <button
             onClick={() => setActiveTab('users')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors font-medium ${
+            className={`flex-shrink-0 flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-lg transition-colors font-medium text-sm md:text-base ${
               activeTab === 'users' ? 'bg-[#8d4745] text-white' : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
-            <Users className="h-5 w-5" />
+            <Users className="h-4 w-4 md:h-5 md:w-5" />
             Users
           </button>
 
           <button
             onClick={() => setActiveTab('orders')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors font-medium ${
+            className={`flex-shrink-0 flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-lg transition-colors font-medium text-sm md:text-base ${
               activeTab === 'orders' ? 'bg-[#8d4745] text-white' : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
-            <ShoppingCart className="h-5 w-5" />
+            <ShoppingCart className="h-4 w-4 md:h-5 md:w-5" />
             Orders
           </button>
         </nav>

@@ -119,7 +119,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Menu, X, Search, User } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { toast } from "react-toastify";
+import { supabase } from '../lib/supabase';
 import logo from "../images/terra-skin-logo.png";
+import { Session } from '@supabase/supabase-js';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -137,13 +139,47 @@ const Header: React.FC = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+  const [session, setSession] = useState<Session | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
-  const handleLogout = () => {
-    localStorage.removeItem("loggedIn");
+  React.useEffect(() => {
+    // 1. Initial session check
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      if (currentSession?.user?.id) {
+        fetchProfile(currentSession.user.id);
+      }
+    });
+
+    // 2. Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: string, newSession: Session | null) => {
+      setSession(newSession);
+      if (newSession?.user?.id) {
+        fetchProfile(newSession.user.id);
+      } else {
+        setUserRole(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const fetchProfile = async (userId: string) => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', userId)
+      .single();
+    if (data) setUserRole(data.role);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     toast.success("✅ Logged out successfully!", { autoClose: 2000 });
     navigate("/login");
   };
+
+  const isLoggedIn = !!session;
 
   return (
     <header className="bg-white shadow-sm fixed w-full top-0 z-50">
@@ -225,6 +261,14 @@ const Header: React.FC = () => {
                       >
                         My Orders
                       </Link>
+                      {userRole === 'admin' && (
+                        <Link
+                          to="/admin"
+                          className="block w-full text-center px-4 py-2.5 text-sm font-medium text-[#8d4745] hover:bg-gray-50 transition-colors border-t border-gray-100"
+                        >
+                          Dashboard
+                        </Link>
+                      )}
                       <button
                         onClick={handleLogout}
                         className="block w-full text-center px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#8d4745] transition-colors"

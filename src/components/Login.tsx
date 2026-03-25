@@ -22,7 +22,7 @@ const Login: React.FC = () => {
 
       if (error) throw error;
 
-      localStorage.setItem("loggedIn", "true");
+      // localStorage.setItem("loggedIn", "true"); (Remvoed in favor of Supabase Sessions)
       
       toast.success("Login successful!", {
         position: "top-right",
