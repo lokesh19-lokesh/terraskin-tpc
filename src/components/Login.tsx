@@ -96,10 +96,10 @@ const Login: React.FC = () => {
         {!showForm ? (
           <>
             <h1 className="text-5xl sm:text-7xl md:text-8xl leading-[0.95] tracking-[-2.46px] max-w-7xl text-white font-['Instrument_Serif'] animate-fade-rise">
-              Radiance in a Distracted World
+              Reconnect Your Skin To Nature
             </h1>
             <p className="text-base sm:text-lg max-w-2xl mt-8 leading-relaxed text-white animate-fade-rise-delay">
-              We're curating skincare for deep thinkers, bold creators, and quiet rebels. Amid the chaos, we build digital spaces for sharp focus and inspired work.
+              Experience the difference of premium, science-backed formulas. We blend natural ingredients with clinical expertise to reveal your skin’s true, healthy radiance.
             </p>
             <button 
               onClick={() => setShowForm(true)}
