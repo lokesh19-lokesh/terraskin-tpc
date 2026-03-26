@@ -24,8 +24,35 @@ const ProductDetails: React.FC = () => {
         if (data) {
           setProduct(data);
           // Try to load related
-          const { data: related } = await supabase.from('products').select('*').eq('category', data.category).neq('id', id).limit(4);
-          if (related) setRelatedProducts(related);
+          const { data: relatedInCategory } = await supabase
+            .from('products')
+            .select('*')
+            .eq('category', data.category)
+            .eq('is_active', true)
+            .neq('id', id)
+            .limit(4);
+            
+          let finalRelated = relatedInCategory || [];
+          
+          if (finalRelated.length < 4) {
+            const relatedIds = finalRelated.map(p => p.id);
+            // If we have some, exclude them. If none, we still need a valid UUID format for the 'in' filter fallback
+            const excludeIds = relatedIds.length > 0 ? `(${relatedIds.join(',')})` : '(00000000-0000-0000-0000-000000000000)';
+            
+            const { data: otherProducts } = await supabase
+              .from('products')
+              .select('*')
+              .eq('is_active', true)
+              .neq('id', id)
+              .filter('id', 'not.in', excludeIds)
+              .limit(4 - finalRelated.length);
+              
+            if (otherProducts) {
+              finalRelated = [...finalRelated, ...otherProducts];
+            }
+          }
+          
+          setRelatedProducts(finalRelated);
         }
         setLoading(false);
       }
@@ -327,7 +354,9 @@ const ProductDetails: React.FC = () => {
                 You May Also Like
               </h2>
               <p className="text-gray-600">
-                Discover other products in the {product.category} collection
+                {relatedProducts.length > 0 && relatedProducts.every(rp => rp.category === product.category)
+                  ? `Discover other products in the ${product.category} collection`
+                  : "Discover other products you may love"}
               </p>
             </div>
             
