@@ -122,6 +122,53 @@ app.post('/api/shiprocket/create-order', async (req, res) => {
   }
 });
 
+// Route to cancel order in Shiprocket
+app.post('/api/shiprocket/cancel-order', async (req, res) => {
+  const { orderId, shiprocketOrderId } = req.body;
+
+  try {
+    if (shiprocketOrderId) {
+      if (!shiprocketToken) {
+        await getShiprocketToken();
+      }
+
+      // 1. Cancel in Shiprocket
+      await axios.post(
+        'https://apiv2.shiprocket.in/v1/external/orders/cancel',
+        { ids: [shiprocketOrderId] },
+        {
+          headers: {
+            'Authorization': `Bearer ${shiprocketToken}`
+          }
+        }
+      );
+    }
+
+    // 2. Update Supabase Order status
+    const { error: updateError } = await supabase
+      .from('orders')
+      .update({
+        status: 'cancelled',
+        shiprocket_status: 'CANCELLED'
+      })
+      .eq('id', orderId);
+
+    if (updateError) throw updateError;
+
+    res.json({
+      success: true,
+      message: 'Order cancelled successfully'
+    });
+
+  } catch (error) {
+    console.error('Order Cancellation Error:', error.response?.data || error.message);
+    res.status(500).json({
+      success: false,
+      error: error.response?.data || error.message
+    });
+  }
+});
+
 app.get('/', (req, res) => res.send('API is running'));
 
 const PORT = process.env.PORT || 5000;

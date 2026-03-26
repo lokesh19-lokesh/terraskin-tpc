@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
@@ -17,6 +16,7 @@ import Payment from './pages/Payment';
 import Orders from "./components/Orders";
 import AdminRoute from './components/AdminRoute';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 const AppContent = () => {
   const location = useLocation();
@@ -55,6 +55,7 @@ const AppContent = () => {
           <Route path='/PlaceOrderPage' element={<PlaceOrderPage/>}/>
           <Route path='/payment' element={<Payment/>} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
           {/* Secure Admin Portal */}
           <Route path="/admin" element={<AdminRoute />}>

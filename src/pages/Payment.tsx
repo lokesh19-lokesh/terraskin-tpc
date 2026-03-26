@@ -40,7 +40,7 @@
 
 
 //         const options = {
-//           key: "rzp_test_AOZA9FvJqbOWam",
+//           key: "rzp_test_RqeqE8DYASBElz",
 //           amount: Math.round(total * 100), // in paise, integer
 //           currency: "INR",
 //           name: "Your Store",
@@ -208,7 +208,7 @@ const Payment: React.FC = () => {
   //   script.onload = () => {
   //     if (window.Razorpay) {
   //       const options = {
-  //         key: "rzp_test_AOZA9FvJqbOWam", // Replace with your Razorpay key
+  //         key: "rzp_test_RqeqE8DYASBElz", // Replace with your Razorpay key
   //         amount: Math.round(total * 100), // in paise
   //         currency: "INR",
   //         name: "Your Store",
@@ -265,7 +265,7 @@ const Payment: React.FC = () => {
     script.onload = () => {
       if (window.Razorpay) {
         const options = {
-          key: "rzp_test_AOZA9FvJqbOWam",
+          key: "rzp_test_RqeqE8DYASBElz",
           amount: Math.round(total * 100),
           currency: "INR",
           name: "Your Store",
