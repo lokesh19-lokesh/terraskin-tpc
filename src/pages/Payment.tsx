@@ -265,7 +265,7 @@ const Payment: React.FC = () => {
     script.onload = () => {
       if (window.Razorpay) {
         const options = {
-          key: "rzp_test_RqeqE8DYASBElz",
+          key: "rzp_live_SVqGXdnQFxriZN",
           amount: Math.round(total * 100),
           currency: "INR",
           name: "Your Store",

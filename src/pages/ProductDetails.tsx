@@ -181,7 +181,6 @@ const ProductDetails: React.FC = () => {
                   {product.rating} ({product.reviews} reviews)
                 </span>
               </div>
-
               <div className="flex items-center mb-6">
                 <span className="text-3xl font-bold text-[#8d4745]">
                   ₹{product.price}
@@ -191,6 +190,24 @@ const ProductDetails: React.FC = () => {
                     ₹{product.originalPrice}
                   </span>
                 )}
+              </div>
+
+              {/* Stock Status Notification */}
+              <div className="mb-6">
+                {product.stock_quantity === 0 ? (
+                  <div className="bg-red-50 border border-red-100 rounded-lg p-3">
+                    <span className="text-sm font-bold text-red-600 uppercase tracking-wider block">Currently Out of Stock</span>
+                    <p className="text-xs text-red-500 mt-1">Check back soon or contact support for restock updates.</p>
+                  </div>
+                ) : product.stock_quantity !== undefined && product.stock_quantity <= 2 ? (
+                  <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 flex items-center gap-3 animate-pulse">
+                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <div>
+                      <span className="text-sm font-bold text-red-600 uppercase">Only {product.stock_quantity} Items Left!</span>
+                      <p className="text-xs text-red-500">Less than 2 items in stock. Grab yours before it's gone!</p>
+                    </div>
+                  </div>
+                ) : null}
               </div>
 
               <p className="text-gray-600 mb-6 leading-relaxed">
@@ -239,10 +256,15 @@ const ProductDetails: React.FC = () => {
               <div className="flex space-x-4 mb-8">
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 bg-[#8d4745] text-white py-3 px-6 rounded-full hover:bg-[#7a3f3d] transition-colors duration-300 flex items-center justify-center space-x-2 font-semibold"
+                  disabled={product.stock_quantity === 0}
+                  className={`flex-1 py-3 px-6 rounded-full transition-colors duration-300 flex items-center justify-center space-x-2 font-semibold shadow-lg ${
+                    product.stock_quantity === 0 
+                      ? 'bg-gray-300 cursor-not-allowed text-gray-500' 
+                      : 'bg-[#8d4745] text-white hover:bg-[#7a3f3d]'
+                  }`}
                 >
                   <ShoppingCart className="h-5 w-5" />
-                  <span>Add to Cart</span>
+                  <span>{product.stock_quantity === 0 ? 'Out of Stock' : 'Add to Cart'}</span>
                 </button>
                 <button className="p-3 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors duration-200">
                   <Heart className="h-5 w-5" />

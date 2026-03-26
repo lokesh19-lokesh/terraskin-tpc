@@ -99,15 +99,27 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <span className="text-lg font-bold text-[#8d4745]">
             ₹{product.price}
           </span>
-          {product.originalPrice && (
-            <span className="ml-2 text-sm text-gray-500 line-through">
-              ₹{product.originalPrice}
-            </span>
-          )}
+            {product.originalPrice && (
+              <span className="ml-2 text-sm text-gray-500 line-through">
+                ₹{product.originalPrice}
+              </span>
+            )}
+          </div>
+
+          {/* Stock Status Notification */}
+          <div className="mt-2 min-h-[20px]">
+            {product.stock_quantity === 0 ? (
+              <span className="text-xs font-bold text-red-600 uppercase tracking-wider">Out of Stock</span>
+            ) : product.stock_quantity !== undefined && product.stock_quantity <= 2 ? (
+              <div className="flex items-center gap-1.5 animate-pulse">
+                <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                <span className="text-xs font-bold text-red-500 uppercase">Only {product.stock_quantity} Left! Less than 2 items</span>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
 };
 
 export default ProductCard;
