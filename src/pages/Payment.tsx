@@ -275,78 +275,46 @@ const Payment: React.FC = () => {
             contact: shippingAddress.mobile || "9999999999",
           },
           handler: async (response: any) => {
-            console.log("Razorpay sucess response:", response);
+            console.log("Razorpay success response:", response);
             try {
               if (!session?.user?.id) throw new Error("No active user session");
 
-              // 1. Create the order in Supabase
-              const { data: orderData, error: orderError } = await supabase
-                .from('orders')
-                .insert({
-                  user_id: session.user.id,
-                  total_amount: total,
-                  status: 'processing',
-                  shipping_address: shippingAddress,
-                  payment_id: response.razorpay_payment_id,
-                  payment_method: 'razorpay',
-                  payment_status: 'paid'
-                })
-                .select()
-                .single();
-
-              if (orderError) throw orderError;
-
-              // 2. Create order items
-              const orderItems = state.items.map(item => ({
-                order_id: orderData.id,
-                product_id: item.id,
-                quantity: item.quantity,
-                price_at_purchase: item.price
-              }));
-
-              const { error: itemsError } = await supabase
-                .from('order_items')
-                .insert(orderItems);
-
-              if (itemsError) throw itemsError;
-
-              // ✅ Show success toast
-              toast.success(`Order Placed! ID: ${response.razorpay_payment_id}`);
-
-              // 3. Trigger Shiprocket Order Creation via Backend
-              try {
-                const shiprocketResponse = await fetch('http://localhost:5000/api/shiprocket/create-order', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    orderId: orderData.id,
-                    shippingAddress: shippingAddress,
-                    items: state.items,
-                    totalAmount: total
-                  }),
-                });
-
-                const shiprocketData = await shiprocketResponse.json();
-                if (shiprocketData.success) {
-                  toast.success("Shiprocket order created successfully!");
-                } else {
-                  console.error("Shiprocket creation failed:", shiprocketData.error);
-                  toast.warning("Order placed, but Shiprocket registration failed. Admin will handle it manually.");
+              // 🟢 Single call to Supabase Edge Function to handle EVERYTHING
+              // (Order creation, Order Items, and Shiprocket Sync)
+              toast.info("Processing your order...");
+              
+              const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('shiprocket', {
+                body: {
+                  action: 'checkout',
+                  userId: session.user.id,
+                  totalAmount: total,
+                  shippingAddress: shippingAddress,
+                  paymentId: response.razorpay_payment_id,
+                  items: state.items
                 }
-              } catch (srErr) {
-                console.error("Shiprocket API call failed:", srErr);
+              });
+
+              if (checkoutError) {
+                toast.error("Supabase Connection Error: " + checkoutError.message);
+                throw checkoutError;
               }
 
-              // ✅ Clear cart and move on
-              setTimeout(() => {
-                dispatch({ type: 'CLEAR_CART' });
-                navigate("/orders");
-              }, 1500);
+              if (checkoutData && checkoutData.success) {
+                toast.success("Order placed successfully!");
+                
+                // ✅ Clear cart and move on
+                setTimeout(() => {
+                  dispatch({ type: 'CLEAR_CART' });
+                  navigate("/orders");
+                }, 1500);
+              } else {
+                const errMsg = checkoutData?.error ? (typeof checkoutData.error === 'object' ? JSON.stringify(checkoutData.error) : checkoutData.error) : "Checkout failed";
+                toast.error(`Shiprocket Error: ${errMsg}`);
+              }
+
             } catch (err: any) {
-              console.error("Order creation failed:", err);
-              toast.error("Payment was successful, but we failed to save your order details. Please contact support.");
+              console.error("Order processing failed:", err);
+              toast.error(`Order processing failed: ${err.message || 'Please contact support.'}`);
             }
           },
           modal: {

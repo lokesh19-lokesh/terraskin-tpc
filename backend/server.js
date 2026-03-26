@@ -125,6 +125,7 @@ app.post('/api/shiprocket/create-order', async (req, res) => {
 // Route to cancel order in Shiprocket
 app.post('/api/shiprocket/cancel-order', async (req, res) => {
   const { orderId, shiprocketOrderId } = req.body;
+  console.log("Received cancellation request for:", { orderId, shiprocketOrderId });
 
   try {
     if (shiprocketOrderId) {
@@ -161,16 +162,17 @@ app.post('/api/shiprocket/cancel-order', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Order Cancellation Error:', error.response?.data || error.message);
+    const errorDetail = error.response?.data || error.message;
+    console.error('Order Cancellation Error Details:', JSON.stringify(errorDetail, null, 2));
     res.status(500).json({
       success: false,
-      error: error.response?.data || error.message
+      error: errorDetail
     });
   }
 });
 
 app.get('/', (req, res) => res.send('API is running'));
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
 

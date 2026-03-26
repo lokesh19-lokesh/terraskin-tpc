@@ -41,24 +41,29 @@ const Orders: React.FC = () => {
     if (!window.confirm("Are you sure you want to cancel this order?")) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/shiprocket/cancel-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ orderId, shiprocketOrderId }),
+      const { data, error } = await supabase.functions.invoke('shiprocket', {
+        body: {
+          action: 'cancel',
+          orderId,
+          shiprocketOrderId
+        }
       });
 
-      const data = await response.json();
-      if (data.success) {
+      if (error) {
+        toast.error("Supabase Connection Error: " + error.message);
+        throw error;
+      }
+      
+      if (data && data.success) {
         toast.success("Order cancelled successfully");
         fetchOrders();
       } else {
-        toast.error(data.error || "Failed to cancel order");
+        const errMsg = data?.error ? (typeof data.error === 'object' ? JSON.stringify(data.error) : data.error) : "Failed to cancel order";
+        toast.error(`Cancellation failed: ${errMsg}`);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Cancellation error:", err);
-      toast.error("An error occurred while cancelling the order");
+      toast.error(`An error occurred: ${err.message || 'Server connection failed'}`);
     }
   };
 
