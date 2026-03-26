@@ -313,6 +313,32 @@ const Payment: React.FC = () => {
               // ✅ Show success toast
               toast.success(`Order Placed! ID: ${response.razorpay_payment_id}`);
 
+              // 3. Trigger Shiprocket Order Creation via Backend
+              try {
+                const shiprocketResponse = await fetch('http://localhost:5000/api/shiprocket/create-order', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    orderId: orderData.id,
+                    shippingAddress: shippingAddress,
+                    items: state.items,
+                    totalAmount: total
+                  }),
+                });
+
+                const shiprocketData = await shiprocketResponse.json();
+                if (shiprocketData.success) {
+                  toast.success("Shiprocket order created successfully!");
+                } else {
+                  console.error("Shiprocket creation failed:", shiprocketData.error);
+                  toast.warning("Order placed, but Shiprocket registration failed. Admin will handle it manually.");
+                }
+              } catch (srErr) {
+                console.error("Shiprocket API call failed:", srErr);
+              }
+
               // ✅ Clear cart and move on
               setTimeout(() => {
                 dispatch({ type: 'CLEAR_CART' });

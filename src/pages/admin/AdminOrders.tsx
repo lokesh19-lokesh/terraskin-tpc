@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { toast } from 'react-toastify';
 
@@ -80,6 +80,7 @@ const AdminOrders = () => {
               <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Customer</th>
               <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Total Amount</th>
               <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Date</th>
+              <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Shiprocket ID</th>
               <th className="px-6 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">Tracking Status</th>
             </tr>
           </thead>
@@ -98,24 +99,32 @@ const AdminOrders = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-gray-500 text-xs">
                   {new Date(order.created_at).toLocaleDateString()}
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap text-gray-500 text-xs">
+                  {order.shiprocket_order_id || 'N/A'}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right">
-                  <select 
-                    value={order.status}
-                    onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                    className={`ml-auto p-1.5 focus:outline-none focus:ring-2 focus:ring-[#8d4745] appearance-none cursor-pointer border rounded-md text-xs font-semibold
-                      ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : ''}
-                      ${order.status === 'processing' ? 'bg-blue-100 text-blue-800 border-blue-200' : ''}
-                      ${order.status === 'shipped' ? 'bg-purple-100 text-purple-800 border-purple-200' : ''}
-                      ${order.status === 'delivered' ? 'bg-green-100 text-green-800 border-green-200' : ''}
-                      ${order.status === 'cancelled' ? 'bg-red-100 text-red-800 border-red-200' : ''}
-                    `}
-                  >
-                    <option value="pending">Pending</option>
-                    <option value="processing">Processing</option>
-                    <option value="shipped">Shipped</option>
-                    <option value="delivered">Delivered</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
+                  <div className="flex flex-col items-end gap-1">
+                    <select 
+                      value={order.status}
+                      onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                      className={`ml-auto p-1.5 focus:outline-none focus:ring-2 focus:ring-[#8d4745] appearance-none cursor-pointer border rounded-md text-xs font-semibold
+                        ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : ''}
+                        ${order.status === 'processing' ? 'bg-blue-100 text-blue-800 border-blue-200' : ''}
+                        ${order.status === 'shipped' ? 'bg-purple-100 text-purple-800 border-purple-200' : ''}
+                        ${order.status === 'delivered' ? 'bg-green-100 text-green-800 border-green-200' : ''}
+                        ${order.status === 'cancelled' ? 'bg-red-100 text-red-800 border-red-200' : ''}
+                      `}
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="processing">Processing</option>
+                      <option value="shipped">Shipped</option>
+                      <option value="delivered">Delivered</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+                    {order.shiprocket_status && (
+                      <span className="text-[10px] text-gray-400">SR: {order.shiprocket_status}</span>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
