@@ -17,13 +17,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   return (
-    <div className="group bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
-      <div className="relative overflow-hidden">
-        <Link to={`/product/${product.id}`}>
+    <div className="group bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden h-full flex flex-col">
+      <div className="relative overflow-hidden shrink-0">
+        <Link to={`/product/${product.id}`} className="block bg-gray-50">
           <img
             src={product.image_url || (product.images && product.images[0]) || 'https://images.pexels.com/photos/4465831/pexels-photo-4465831.jpeg?auto=compress&cs=tinysrgb&w=800'}
             alt={product.name}
-            className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-64 object-contain group-hover:scale-105 transition-transform duration-300"
             onError={(e) => {
               (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/4465831/pexels-photo-4465831.jpeg?auto=compress&cs=tinysrgb&w=800';
             }}
@@ -64,9 +64,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </button>
       </div>
 
-      <div className="p-4">
+      <div className="p-4 flex flex-col flex-1">
         <Link to={`/product/${product.id}`}>
-          <h3 className="text-lg font-semibold text-gray-900 hover:text-[#8d4745] transition-colors duration-200 line-clamp-2">
+          <h3 className="text-lg font-semibold text-gray-900 hover:text-[#8d4745] transition-colors duration-200 line-clamp-2 min-h-[3.5rem] flex items-center">
             {product.name}
           </h3>
         </Link>
@@ -74,6 +74,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <p className="text-sm text-gray-600 mt-1 line-clamp-2">
           {product.description}
         </p>
+        
+        <div className="flex-1"></div>
 
         {/* Rating */}
         <div className="flex items-center mt-2">
@@ -113,7 +115,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             ) : product.stock_quantity !== undefined && product.stock_quantity <= 2 ? (
               <div className="flex items-center gap-1.5 animate-pulse">
                 <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
-                <span className="text-xs font-bold text-red-500 uppercase">Only {product.stock_quantity} Left! Less than 2 items</span>
+                <span className="text-xs font-bold text-red-500 uppercase">Only {product.stock_quantity} Left!</span>
               </div>
             ) : null}
           </div>

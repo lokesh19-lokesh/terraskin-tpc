@@ -65,7 +65,7 @@ const CartPage: React.FC = () => {
                         <img
                           src={item.image_url || (item.images && item.images[0]) || 'https://images.pexels.com/photos/4465831/pexels-photo-4465831.jpeg?auto=compress&cs=tinysrgb&w=800'}
                           alt={item.name}
-                          className="w-20 h-20 object-cover rounded-lg"
+                          className="w-20 h-20 object-contain rounded-lg bg-gray-50"
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/4465831/pexels-photo-4465831.jpeg?auto=compress&cs=tinysrgb&w=800';
                           }}
