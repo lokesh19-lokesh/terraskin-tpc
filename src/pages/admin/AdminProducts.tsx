@@ -52,7 +52,7 @@ const AdminProducts = () => {
 
   const fetchProducts = async () => {
     try {
-      const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
       if (error) throw error;
       setProducts(data || []);
     } catch (error: any) {
@@ -118,7 +118,8 @@ const AdminProducts = () => {
           stock_quantity: parseInt(editStock, 10),
           category: editCategory,
           image_url: finalImageUrl,
-          description: editDescription
+          description: editDescription,
+          is_active: true
         })
         .eq('id', editingId);
 
@@ -138,14 +139,20 @@ const AdminProducts = () => {
   };
 
   const handleDeleteProduct = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this product? This cannot be undone.")) return;
+    if (!confirm("Are you sure you want to delete this product? This will remove it from the shop and dashboard, but keep it in your record history.")) return;
+    
     try {
-      const { error } = await supabase.from('products').delete().eq('id', id);
+      const { error } = await supabase
+        .from('products')
+        .update({ is_active: false })
+        .eq('id', id);
+      
       if (error) throw error;
+      
       toast.success("Product deleted successfully");
       fetchProducts();
     } catch (error: any) {
-      toast.error("Failed to delete product: " + error.message);
+      toast.error("Deletion failed: " + (error.message || "Unknown error occurred"));
     }
   };
 
@@ -169,7 +176,7 @@ const AdminProducts = () => {
         const fileName = `${Math.random()}.${fileExt}`;
         const filePath = `${fileName}`;
 
-        const { error: uploadError, data } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('product-images')
           .upload(filePath, imageFile);
 
@@ -191,7 +198,8 @@ const AdminProducts = () => {
           stock_quantity: parseInt(newStock, 10),
           category: newCategory,
           image_url: finalImageUrl,
-          description: newDescription || "Premium Skincare Product"
+          description: newDescription || "Premium Skincare Product",
+          is_active: true
         }
       ]);
 
