@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Filter, X } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import AnimatedSection from '../components/AnimatedSection';
@@ -6,15 +7,24 @@ import { supabase } from '../lib/supabase';
 import { FilterState } from '../types';
 
 const ShopPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const initialCategory = searchParams.get('category')?.toLowerCase() || 'all';
+
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
-    category: 'all',
+    category: initialCategory,
     priceRange: [0, 200],
     skinType: 'all',
     bestSellers: false
   });
 
   const [products, setProducts] = useState<any[]>([]);
+
+  useEffect(() => {
+    // Update category filter if URL param changes
+    const urlCategory = searchParams.get('category')?.toLowerCase() || 'all';
+    setFilters(prev => ({ ...prev, category: urlCategory }));
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -69,7 +79,7 @@ const ShopPage: React.FC = () => {
   };
 
   return (
-    <div style={{backgroundColor:'#f4ece6'}} className="pt-16 min-h-screen bg-gray-50">
+    <div style={{backgroundColor:'#f4ece6'}} className="pt-24 min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <AnimatedSection className="mb-8">
@@ -85,7 +95,7 @@ const ShopPage: React.FC = () => {
             
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="mt-4 sm:mt-0 inline-flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors duration-200"
+              className="lg:hidden mt-4 sm:mt-0 inline-flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors duration-200"
             >
               <Filter className="h-4 w-4" />
               <span>Filters</span>

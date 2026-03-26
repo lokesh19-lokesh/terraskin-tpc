@@ -211,7 +211,7 @@ const Header: React.FC = () => {
           </nav>
 
           {/* Right side actions */}
-          <div className="flex items-center space-x-4 relative">
+          <div className="flex items-center space-x-1 sm:space-x-4 relative">
             <button className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
               <Search className="h-5 w-5 text-gray-700" />
             </button>

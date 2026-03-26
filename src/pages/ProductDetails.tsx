@@ -33,11 +33,11 @@ const ProductDetails: React.FC = () => {
     loadProduct();
   }, [id]);
 
-  if (loading) return <div className="pt-16 min-h-screen flex items-center justify-center">Loading product...</div>;
+  if (loading) return <div className="pt-24 min-h-screen flex items-center justify-center">Loading product...</div>;
 
   if (!product) {
     return (
-      <div className="pt-16 min-h-screen flex items-center justify-center">
+      <div className="pt-24 min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Product Not Found</h2>
           <Link to="/shop" className="text-[#8d4745] hover:underline">
@@ -65,7 +65,7 @@ const ProductDetails: React.FC = () => {
   };
 
   return (
-    <div className="pt-16 min-h-screen bg-gray-50">
+    <div className="pt-24 min-h-screen bg-gray-50">
       {/* Breadcrumb */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

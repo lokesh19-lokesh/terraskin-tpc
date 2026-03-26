@@ -87,29 +87,29 @@ const Footer: React.FC = () => {
         </ul>
       </div>
 
-      {/* Customer Care */}
+      {/* Product Categories */}
       <div>
         <h4 className="text-lg font-semibold mb-4">Products</h4>
         <ul className="space-y-2">
           <li>
-            <a href="#" className="text-gray-300 hover:text-[#8d4745] transition-colors duration-200">
-              SkinCare
-            </a>
+            <Link to="/shop?category=serums" className="text-gray-300 hover:text-[#8d4745] transition-colors duration-200">
+              Serums
+            </Link>
           </li>
           <li>
-            <a href="#" className="text-gray-300 hover:text-[#8d4745] transition-colors duration-200">
-              SunScreen
-            </a>
+            <Link to="/shop?category=cleansers" className="text-gray-300 hover:text-[#8d4745] transition-colors duration-200">
+              Cleansers
+            </Link>
           </li>
           <li>
-            <a href="#" className="text-gray-300 hover:text-[#8d4745] transition-colors duration-200">
-              BodySkin
-            </a>
-          </li>
-          <li>
-            <a href="#" className="text-gray-300 hover:text-[#8d4745] transition-colors duration-200">
+            <Link to="/shop?category=moisturizers" className="text-gray-300 hover:text-[#8d4745] transition-colors duration-200">
               Moisturizers
-            </a>
+            </Link>
+          </li>
+          <li>
+            <Link to="/shop?category=suncare" className="text-gray-300 hover:text-[#8d4745] transition-colors duration-200">
+              Sun Care
+            </Link>
           </li>
         </ul>
       </div>

@@ -22,7 +22,7 @@ const CartPage: React.FC = () => {
 
   if (state.items.length === 0) {
     return (
-      <div className="pt-16 min-h-screen bg-gray-50">
+      <div className="pt-24 min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <AnimatedSection className="text-center">
             <ShoppingBag className="h-24 w-24 text-gray-300 mx-auto mb-6" />
@@ -45,7 +45,7 @@ const CartPage: React.FC = () => {
   }
 
   return (
-    <div className="pt-16 min-h-screen bg-gray-50">
+    <div className="pt-24 min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <AnimatedSection>
           <h1 className="text-3xl font-bold text-gray-900 font-['Playfair_Display'] mb-8">

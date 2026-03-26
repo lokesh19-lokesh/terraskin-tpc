@@ -96,7 +96,7 @@ const Orders: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen pt-24 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#8d4745] border-t-transparent"></div>
       </div>
     );
@@ -104,7 +104,7 @@ const Orders: React.FC = () => {
 
   if (orders.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+      <div className="min-h-screen pt-24 flex flex-col items-center justify-center bg-gray-50">
         <h2 className="text-2xl font-bold text-gray-400 mb-4 font-['Playfair_Display']">No orders yet</h2>
         <p className="text-gray-500">Your order history will appear here once you make a purchase.</p>
       </div>
@@ -112,7 +112,7 @@ const Orders: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen p-6 bg-gray-50 font-['Inter']">
+    <div className="min-h-screen pt-24 p-6 bg-gray-50 font-['Inter']">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-3xl font-bold text-[#8d4745] mb-8 font-['Playfair_Display']">My Orders</h2>
         <div className="space-y-6">
