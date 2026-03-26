@@ -116,10 +116,12 @@ const Footer: React.FC = () => {
             </form>
           </div>
         </div>
+      </div>
 
-        {/* Bottom section */}
-        <div className="mt-16 pt-8 border-t border-gray-800">
-          <div className="flex flex-col md:flex-row justify-between items-center text-gray-500 text-xs space-y-4 md:space-y-0 text-center md:text-left">
+      {/* Bottom section (Navbar color background) */}
+      <div className="bg-white border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col md:flex-row justify-between items-center text-gray-500 text-xs space-y-4 md:space-y-0 text-center md:text-left font-medium">
             <div>
               © 2025 Terra Skin. All rights reserved.
             </div>
