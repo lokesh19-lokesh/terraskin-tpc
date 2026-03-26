@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 const Orders: React.FC = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [trackingInfo, setTrackingInfo] = useState<Record<string, any>>({});
+  const [trackingLoading, setTrackingLoading] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     fetchOrders();
@@ -64,6 +66,31 @@ const Orders: React.FC = () => {
     } catch (err: any) {
       console.error("Cancellation error:", err);
       toast.error(`An error occurred: ${err.message || 'Server connection failed'}`);
+    }
+  };
+
+  const handleTrackOrder = async (orderId: string, shipmentId: string) => {
+    try {
+      setTrackingLoading(prev => ({ ...prev, [orderId]: true }));
+      const { data, error } = await supabase.functions.invoke('shiprocket', {
+        body: {
+          action: 'track',
+          shipmentId
+        }
+      });
+
+      if (error) throw error;
+      
+      if (data && data.success) {
+        setTrackingInfo(prev => ({ ...prev, [orderId]: data.tracking }));
+      } else {
+        toast.error("Could not fetch tracking info.");
+      }
+    } catch (err: any) {
+      console.error("Tracking error:", err);
+      toast.error("Failed to fetch live tracking.");
+    } finally {
+      setTrackingLoading(prev => ({ ...prev, [orderId]: false }));
     }
   };
 
@@ -152,9 +179,50 @@ const Orders: React.FC = () => {
               </div>
               
               {order.shiprocket_order_id && (
-                <div className="mt-4 pt-4 border-t border-gray-50 flex justify-between items-center bg-gray-50 p-3 rounded-lg">
-                  <span className="text-xs font-bold text-gray-500 uppercase">Shiprocket Tracking</span>
-                  <span className="text-xs font-mono text-gray-700 font-bold">ID: {order.shiprocket_order_id}</span>
+                <div className="mt-4 pt-4 border-t border-gray-50 bg-gray-50 p-4 rounded-xl space-y-3">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <span className="text-xs font-bold text-gray-500 uppercase block mb-1">Shiprocket Tracking</span>
+                      <span className="text-xs font-mono text-gray-700 font-bold">ID: {order.shiprocket_order_id}</span>
+                    </div>
+                    {order.shiprocket_shipment_id && !trackingInfo[order.id] && (
+                      <button
+                        onClick={() => handleTrackOrder(order.id, order.shiprocket_shipment_id)}
+                        disabled={trackingLoading[order.id]}
+                        className="text-xs font-bold text-[#8d4745] hover:text-[#7a3d3c] bg-white border border-[#e8d5d4] px-3 py-1.5 rounded-lg transition-all disabled:opacity-50"
+                      >
+                        {trackingLoading[order.id] ? 'Fetching...' : 'Track Live Status'}
+                      </button>
+                    )}
+                  </div>
+
+                  {trackingInfo[order.id] && (
+                    <div className="bg-white border border-gray-100 rounded-lg p-3 animate-fade-in">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <p className="text-xs font-bold text-gray-800 uppercase tracking-tight">
+                          Live Status: {trackingInfo[order.id]?.tracking_data?.shipment_track?.[0]?.current_status || 'Updating...'}
+                        </p>
+                      </div>
+                      
+                      {trackingInfo[order.id]?.tracking_data?.shipment_track?.[0]?.scanned_location && (
+                        <p className="text-xs text-gray-500">
+                          Location: {trackingInfo[order.id].tracking_data.shipment_track[0].scanned_location}
+                        </p>
+                      )}
+                      
+                      {trackingInfo[order.id]?.tracking_data?.track_url && (
+                        <a 
+                          href={trackingInfo[order.id].tracking_data.track_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-[10px] font-bold text-[#8d4745] hover:underline block mt-2"
+                        >
+                          View Detailed Tracking Page →
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
