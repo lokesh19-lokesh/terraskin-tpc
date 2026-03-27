@@ -18,7 +18,7 @@ const AboutPage: React.FC = () => {
             About TerraSkin
           </h1>
           <p className="text-xl md:text-2xl max-w-3xl mx-auto opacity-90">
-            Transforming skincare with science-backed formulations and natural ingredients since 2024
+            Transforming skincare with science-backed formulations and natural ingredients since 2025
           </p>
         </div>
       </AnimatedSection>
@@ -136,7 +136,7 @@ const AboutPage: React.FC = () => {
                 className="relative rounded-2xl shadow-2xl w-full h-[500px] object-cover object-top z-10"
               />
               <div className="absolute -bottom-6 -right-6 bg-[#8d4745] text-white p-6 rounded-2xl shadow-xl z-20 animate-bounce-subtle">
-                <p className="text-2xl font-['Instrument_Serif']">Since 2024</p>
+                <p className="text-2xl font-['Instrument_Serif']">since 2025</p>
                 <p className="text-xs uppercase tracking-widest opacity-80">Empowering Beauty</p>
               </div>
             </div>
