@@ -3,21 +3,22 @@ import { useLocation } from 'react-router-dom';
 import { Award, Heart, Leaf, Users } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
 import abt from "../images/about-us.png";
+import founderImg from "../images/tanus.jpeg";
 
 const AboutPage: React.FC = () => {
   const location = useLocation();
   const isLoginAbout = location.pathname === '/login-about';
 
   return (
-    <div style={{backgroundColor:'#f4ece6'}} className="pt-24">
+    <div style={{ backgroundColor: '#f4ece6' }} className="pt-24">
       {/* Hero Section */}
       <AnimatedSection className="bg-gradient-to-r from-[#8d4745] to-[#a05552] text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold font-['Playfair_Display'] mb-6">
-            About TerraSkin 
+            About TerraSkin
           </h1>
           <p className="text-xl md:text-2xl max-w-3xl mx-auto opacity-90">
-            Transforming skincare with science-backed formulations and natural ingredients since 2015
+            Transforming skincare with science-backed formulations and natural ingredients since 2024
           </p>
         </div>
       </AnimatedSection>
@@ -30,9 +31,9 @@ const AboutPage: React.FC = () => {
               Our Story
             </h2>
             <p className="text-lg text-gray-600 leading-relaxed">
-              Founded by dermatologist Tanuja, TerraSkin was born from a passion for creating 
-              effective, gentle skincare solutions that work in harmony with your skin's natural processes. 
-              After years of research and development, we've crafted a collection of products that combine 
+              Founded by dermatologist Tanuja, TerraSkin was born from a passion for creating
+              effective, gentle skincare solutions that work in harmony with your skin's natural processes.
+              After years of research and development, we've crafted a collection of products that combine
               the best of nature and science.
             </p>
           </div>
@@ -49,8 +50,8 @@ const AboutPage: React.FC = () => {
               <div>
                 <h3 className="text-2xl font-bold text-[#8d4745] mb-4">Our Mission</h3>
                 <p className="text-gray-600 mb-6">
-                  We believe that everyone deserves healthy, radiant skin. Our mission is to provide 
-                  premium skincare products that deliver real results while being gentle on your skin 
+                  We believe that everyone deserves healthy, radiant skin. Our mission is to provide
+                  premium skincare products that deliver real results while being gentle on your skin
                   and kind to the environment.
                 </p>
                 <ul className="space-y-2 text-gray-600">
@@ -122,54 +123,61 @@ const AboutPage: React.FC = () => {
         </div>
       </AnimatedSection>
 
-      {/* Team Section */}
-      <AnimatedSection animation="slide-up" className="py-16">
+      {/* Founder Section */}
+      <AnimatedSection animation="slide-up" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#8d4745] font-['Playfair_Display'] mb-4">
-              Meet Our Team
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Our passionate team of skincare experts, researchers, and advocates
-            </p>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* Image Side */}
+            <div className="relative group">
+              <div className="absolute -inset-4 bg-[#8d4745]/10 rounded-2xl transform rotate-3 group-hover:rotate-0 transition-transform duration-500"></div>
+              <img
+                src={founderImg}
+                alt="Tanuja - Founder of TerraSkin"
+                className="relative rounded-2xl shadow-2xl w-full h-[500px] object-cover object-top z-10"
+              />
+              <div className="absolute -bottom-6 -right-6 bg-[#8d4745] text-white p-6 rounded-2xl shadow-xl z-20 animate-bounce-subtle">
+                <p className="text-2xl font-['Instrument_Serif']">Since 2024</p>
+                <p className="text-xs uppercase tracking-widest opacity-80">Empowering Beauty</p>
+              </div>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                name: 'Dr.Tanuja',
-                role: 'Founder & Chief Dermatologist',
-                image: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400',
-                bio: 'Board-certified dermatologist with 15+ years of experience in clinical research'
-              },
-              {
-                name: 'Maria Rodriguez',
-                role: 'Head of Product Development',
-                image: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400',
-                bio: 'Cosmetic chemist specializing in natural and organic skincare formulations'
-              },
-              {
-                name: 'James Park',
-                role: 'Research Director',
-                image: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400',
-                bio: 'PhD in Biochemistry with expertise in anti-aging and skin barrier research'
-              }
-            ].map((member, index) => (
-              <AnimatedSection key={index} delay={index * 200} animation="slide-up">
-                <div className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-full h-64 object-cover"
-                  />
-                  <div className="p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">{member.name}</h3>
-                    <p className="text-[#8d4745] font-medium mb-3">{member.role}</p>
-                    <p className="text-gray-600 text-sm">{member.bio}</p>
-                  </div>
+            {/* Content Side */}
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <h2 className="text-4xl md:text-5xl font-bold text-[#8d4745] font-['Playfair_Display']">
+                  Meet our founder
+                </h2>
+                <div className="h-1 w-20 bg-[#8d4745] rounded-full"></div>
+              </div>
+
+              <div className="space-y-6 text-gray-700 leading-relaxed text-lg">
+                <p className="font-semibold text-[#8d4745] text-2xl font-['Instrument_Serif'] italic">
+                  "I am Tanuja..."
+                </p>
+                <p>
+                  All my schooling and my B.Tech graduation was in Anantapur. Since then, I have been working as an IT employee.
+                  However, I have always dreamed of turning my dream into reality. I am a girl who has always envisioned
+                  achieving something meaningful in my life, and my dream is to become an entrepreneur.
+                </p>
+                <p>
+                  I chose the beauty and cosmetics field because I have a strong interest in skincare and beauty.
+                  This field allows me to combine creativity with helping people feel confident and happy in their own skin.
+                </p>
+                <p className="bg-orange-50 p-6 rounded-xl border-l-4 border-[#8d4745] italic text-gray-800">
+                  "Beauty isn’t just about looks—it’s about self-expression and spreading positivity."
+                </p>
+              </div>
+
+              <div className="flex items-center gap-4 pt-4 border-t border-gray-100">
+                <div className="w-12 h-12 bg-[#8d4745]/10 rounded-full flex items-center justify-center text-[#8d4745]">
+                  <Award size={24} />
                 </div>
-              </AnimatedSection>
-            ))}
+                <div>
+                  <p className="font-bold text-gray-900">Tanuja</p>
+                  <p className="text-sm text-gray-500">Founder & Visionary</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </AnimatedSection>
