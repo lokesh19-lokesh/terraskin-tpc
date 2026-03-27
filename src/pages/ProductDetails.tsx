@@ -265,14 +265,16 @@ const ProductDetails: React.FC = () => {
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors duration-200"
+                      disabled={product.stock_quantity === 0}
+                      className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50"
                     >
                       -
                     </button>
-                    <span className="w-12 text-center font-medium">{quantity}</span>
+                    <span className="w-12 text-center font-medium">{product.stock_quantity === 0 ? 0 : quantity}</span>
                     <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors duration-200"
+                      onClick={() => setQuantity(Math.min(product.stock_quantity || 1, quantity + 1))}
+                      disabled={product.stock_quantity === 0 || quantity >= (product.stock_quantity || 0)}
+                      className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50"
                     >
                       +
                     </button>

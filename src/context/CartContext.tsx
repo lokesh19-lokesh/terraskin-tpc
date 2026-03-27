@@ -25,8 +25,13 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_TO_CART': {
       const existingItem = state.items.find(item => item.id === action.payload.id);
+      const stockAvailable = action.payload.stock_quantity ?? 0;
       
       if (existingItem) {
+        // If we already have the maximum available in cart, don't add more
+        if (existingItem.quantity >= stockAvailable) {
+          return state;
+        }
         const updatedItems = state.items.map(item =>
           item.id === action.payload.id
             ? { ...item, quantity: item.quantity + 1 }
@@ -38,6 +43,11 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         return { items: updatedItems, total, itemCount };
       }
       
+      // If product is out of stock, don't add at all
+      if (stockAvailable <= 0) {
+        return state;
+      }
+
       const newItems = [...state.items, { ...action.payload, quantity: 1 }];
       const total = newItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       const itemCount = newItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -54,14 +64,23 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     }
     
     case 'UPDATE_QUANTITY': {
-      const updatedItems = state.items.map(item =>
-        item.id === action.payload.id
-          ? { ...item, quantity: Math.max(0, action.payload.quantity) }
-          : item
-      ).filter(item => item.quantity > 0);
+      const item = state.items.find(i => i.id === action.payload.id);
+      if (!item) return state;
+
+      const stockAvailable = item.stock_quantity ?? 0;
+      const requestedQuantity = Math.max(0, action.payload.quantity);
       
-      const total = updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      const itemCount = updatedItems.reduce((sum, item) => sum + item.quantity, 0);
+      // Enforce stock limit
+      const finalQuantity = Math.min(requestedQuantity, stockAvailable);
+
+      const updatedItems = state.items.map(i =>
+        i.id === action.payload.id
+          ? { ...i, quantity: finalQuantity }
+          : i
+      ).filter(i => i.quantity > 0);
+      
+      const total = updatedItems.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+      const itemCount = updatedItems.reduce((sum, i) => sum + i.quantity, 0);
       
       return { items: updatedItems, total, itemCount };
     }

@@ -57,10 +57,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Quick add to cart */}
         <button
           onClick={handleAddToCart}
-          className="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-[#8d4745] text-white px-4 py-2 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 hover:bg-[#7a3f3d] flex items-center space-x-2 shadow-lg whitespace-nowrap"
+          disabled={product.stock_quantity === 0}
+          className={`absolute bottom-3 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full transition-all duration-300 flex items-center space-x-2 shadow-lg whitespace-nowrap ${
+            product.stock_quantity === 0 
+              ? 'bg-gray-400 cursor-not-allowed opacity-100' 
+              : 'bg-[#8d4745] text-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-[#7a3f3d]'
+          }`}
         >
           <ShoppingCart className="h-4 w-4" />
-          <span className="text-sm font-medium">Add to Cart</span>
+          <span className="text-sm font-medium">
+            {product.stock_quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
+          </span>
         </button>
       </div>
 

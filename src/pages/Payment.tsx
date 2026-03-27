@@ -157,12 +157,6 @@ interface ShippingAddress {
   country: string;
 }
 
-interface OrderItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
 
 // interface Order {
 //   id: string;
@@ -298,8 +292,8 @@ const Payment: React.FC = () => {
     script.onload = () => {
       if (window.Razorpay) {
         const options = {
-          key: "rzp_live_SVqGXdnQFxriZN",
-          // key: "rzp_test_SWA3ntzD7zvvDk",
+          // key: "rzp_live_SVqGXdnQFxriZN",
+          key: "rzp_test_SWA3ntzD7zvvDk",
           amount: Math.round(total * 100),
           currency: "INR",
           name: "Your Store",
