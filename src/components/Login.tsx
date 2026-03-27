@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const Login: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
+  const [isResetMode, setIsResetMode] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -51,6 +52,26 @@ const Login: React.FC = () => {
       }, 1000);
     } catch (error: any) {
       toast.error(error.message || "Invalid credentials", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const handleResetRequest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success("Password reset link sent to your email!", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+      setIsResetMode(false);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to send reset link", {
         position: "top-right",
         autoClose: 3000,
       });
@@ -109,8 +130,10 @@ const Login: React.FC = () => {
           </>
         ) : (
           <div className="liquid-glass w-full max-w-md p-8 rounded-2xl animate-fade-rise">
-            <h2 className="text-3xl text-white font-['Instrument_Serif'] mb-6 text-center">Welcome Back</h2>
-            <form onSubmit={handleLogin} className="space-y-5 text-left">
+            <h2 className="text-3xl text-white font-['Instrument_Serif'] mb-6 text-center">
+              {isResetMode ? "Reset Password" : "Welcome Back"}
+            </h2>
+            <form onSubmit={isResetMode ? handleResetRequest : handleLogin} className="space-y-5 text-left">
               <div>
                 <input
                   type="email"
@@ -121,29 +144,53 @@ const Login: React.FC = () => {
                   required
                 />
               </div>
-              <div>
-                <input
-                  type="password"
-                  placeholder="Password"
-                  className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/70 focus:outline-none focus:border-white/50"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
+              {!isResetMode && (
+                <>
+                  <div>
+                    <input
+                      type="password"
+                      placeholder="Password"
+                      className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/70 focus:outline-none focus:border-white/50"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => setIsResetMode(true)}
+                      className="text-xs text-white/60 hover:text-white transition-colors"
+                    >
+                      Forgot Password?
+                    </button>
+                  </div>
+                </>
+              )}
               <button
                 type="submit"
                 className="w-full bg-white/20 hover:bg-white/30 text-white font-medium py-3 rounded-lg transition-colors border border-white/20"
               >
-                Login
+                {isResetMode ? "Send Reset Link" : "Login"}
               </button>
             </form>
-            <p className="text-center text-white/80 text-sm mt-6">
-              Don’t have an account?{" "}
-              <Link to="/signup" className="text-white font-medium hover:underline">
-                Sign up
-              </Link>
-            </p>
+            <div className="text-center text-white/80 text-sm mt-6 space-y-2">
+              {isResetMode ? (
+                <button 
+                  onClick={() => setIsResetMode(false)}
+                  className="text-white font-medium hover:underline"
+                >
+                  Back to Login
+                </button>
+              ) : (
+                <p>
+                  Don’t have an account?{" "}
+                  <Link to="/signup" className="text-white font-medium hover:underline">
+                    Sign up
+                  </Link>
+                </p>
+              )}
+            </div>
           </div>
         )}
       </div>

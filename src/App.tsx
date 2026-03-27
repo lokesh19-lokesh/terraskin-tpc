@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Link, useNavigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -10,6 +10,7 @@ import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import ResetPassword from './components/ResetPassword';
 import PlaceOrderPage from './pages/PlaceOrderPage';
 import "react-toastify/dist/ReactToastify.css";
 import Payment from './pages/Payment';
@@ -17,10 +18,28 @@ import Orders from "./components/Orders";
 import AdminRoute from './components/AdminRoute';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import { supabase } from './lib/supabase';
+import { useEffect } from 'react';
 
 const AppContent = () => {
   const location = useLocation();
-  const isAuthPage = location.pathname.startsWith('/admin') || location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/login-about' || location.pathname === '/login-contact';
+  const navigate = useNavigate();
+  const isAuthPage = location.pathname.startsWith('/admin') || 
+                     location.pathname === '/login' || 
+                     location.pathname === '/signup' || 
+                     location.pathname === '/reset-password' ||
+                     location.pathname === '/login-about' || 
+                     location.pathname === '/login-contact';
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        navigate('/reset-password');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -46,6 +65,7 @@ const AppContent = () => {
           } />
           <Route path="/home" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/cart" element={<CartPage />} />
