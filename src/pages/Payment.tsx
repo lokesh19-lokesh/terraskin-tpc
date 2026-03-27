@@ -256,6 +256,39 @@ const Payment: React.FC = () => {
 
   //   document.body.appendChild(script);
   // };
+  const logAbandonedOrder = async (status: string) => {
+    try {
+      if (!session?.user?.id) {
+        console.warn("No session user id found for logging order attempt.");
+        return;
+      }
+      
+      console.log(`Logging order attempt with status: ${status}`, {
+        user_id: session.user.id,
+        total_amount: total,
+        shipping_address: shippingAddress,
+        status: status
+      });
+
+      const { data, error } = await supabase.from('orders').insert({
+        user_id: session.user.id,
+        total_amount: total,
+        shipping_address: shippingAddress,
+        status: 'cancelled', // Changed to 'cancelled' as it's definitely a supported status
+      }).select();
+
+      if (error) {
+        console.error("Supabase error logging order attempt:", error);
+        toast.error(`Database error: ${error.message}. Code: ${error.code}. Details: ${error.details}`);
+      } else {
+        console.log("Order attempt logged successfully:", data);
+        toast.info("Order attempt recorded as cancelled.");
+      }
+    } catch (err: any) {
+      console.error("Failed to log order attempt:", err);
+      toast.error(`Failed to log attempt: ${err.message}`);
+    }
+  };
 
   const handlePayment = () => {
     const script = document.createElement("script");
@@ -320,6 +353,7 @@ const Payment: React.FC = () => {
           modal: {
             ondismiss: function() {
               toast.info("Payment cancelled.");
+              logAbandonedOrder('abandoned');
             }
           },
           theme: { color: "#8d4745" },
@@ -335,6 +369,7 @@ const Payment: React.FC = () => {
         paymentObject.on('payment.failed', function (response: any) {
           console.error("Payment failed listener:", response.error);
           alert("Oops! Something went wrong.\n" + response.error.description);
+          logAbandonedOrder('failed');
         });
         paymentObject.open();
       } else {
