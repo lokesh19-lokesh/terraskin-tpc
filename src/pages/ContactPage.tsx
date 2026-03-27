@@ -46,7 +46,7 @@ const ContactPage: React.FC = () => {
   ];
 
   return (
-    <div style={{backgroundColor:'#f4ece6'}} className="pt-16">
+    <div style={{ backgroundColor: '#f4ece6' }} className="pt-16">
       {/* Hero Section */}
       <AnimatedSection className="bg-gradient-to-r from-[#8d4745] to-[#a05552] text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -155,7 +155,7 @@ const ContactPage: React.FC = () => {
                   Get in Touch
                 </h2>
                 <p className="text-gray-600 mb-8">
-                  Have questions about our products or need personalized skincare advice? 
+                  Have questions about our products or need personalized skincare advice?
                   Our team of experts is here to help you achieve your best skin.
                 </p>
 
@@ -167,7 +167,7 @@ const ContactPage: React.FC = () => {
                     <div>
                       <h3 className="font-semibold text-gray-900 mb-1">Visit Our Store</h3>
                       <p className="text-gray-600">
-                        D.no: 28-6-755, Hamali colony, Housing Board, near RTO office, 515001, Anantapur, Andhrapradesh
+                        D.no: 28-6-755, Housing Board, near RTO office, 515001, Anantapur, Andhrapradesh
                       </p>
                     </div>
                   </div>
@@ -246,7 +246,7 @@ const ContactPage: React.FC = () => {
           <div className="text-center text-gray-600">
             <MapPin className="h-12 w-12 mx-auto mb-4" />
             <p>Interactive map would be integrated here</p>
-            <p className="text-sm">D.no: 28-6-755, Hamali colony, Housing Board, near RTO office, 515001, Anantapur, Andhrapradesh</p>
+            <p className="text-sm">D.no: 28-6-755, Housing Board, near RTO office, 515001, Anantapur, Andhrapradesh</p>
           </div>
         </div>
       </AnimatedSection>

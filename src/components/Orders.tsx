@@ -40,7 +40,8 @@ const Orders: React.FC = () => {
   };
 
   const handleCancelOrder = async (orderId: string, shiprocketOrderId: string | null) => {
-    if (!window.confirm("Are you sure you want to cancel this order?")) return;
+    const message = "Are you sure you want to cancel this order? \n\nNote: You will not get your amount refund after shipping the product.";
+    if (!window.confirm(message)) return;
 
     try {
       const { data, error } = await supabase.functions.invoke('shiprocket', {

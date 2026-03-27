@@ -81,13 +81,20 @@ const AdminOrders = () => {
     }
 
     try {
-      const headers = ["Order ID", "Customer Name", "Total Amount", "Status", "Date", "Shiprocket Order ID", "Shiprocket Status"];
+      const headers = ["Order ID", "Customer Name", "Customer Email", "Total Amount", "Status", "Date", "Door No", "Street", "Landmark", "City", "Pincode", "Mobile", "Shiprocket Order ID", "Shiprocket Status"];
       const csvData = filteredOrders.map(order => [
         order.id,
         profiles[order.user_id] || 'Unknown User',
+        order.shipping_address?.email || 'N/A',
         order.total_amount,
         order.status,
         new Date(order.created_at).toLocaleString(),
+        order.shipping_address?.doorNo || 'N/A',
+        order.shipping_address?.street || 'N/A',
+        order.shipping_address?.landmark || 'N/A',
+        order.shipping_address?.city || 'N/A',
+        order.shipping_address?.pincode || 'N/A',
+        order.shipping_address?.mobile || 'N/A',
         order.shiprocket_order_id || 'N/A',
         order.shiprocket_status || 'N/A'
       ]);

@@ -93,6 +93,11 @@ const PlaceOrderPage: React.FC = () => {
       return;
     }
 
+    // Note before ordering
+    if (!window.confirm("Note: You will not get your amount refund after shipping the product. \n\nDo you want to proceed?")) {
+      return;
+    }
+
     // ✅ Save address details
     localStorage.setItem("shippingAddress", JSON.stringify(formData));
 
