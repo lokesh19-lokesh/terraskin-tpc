@@ -176,7 +176,7 @@ const Payment: React.FC = () => {
   const navigate = useNavigate();
   const { state, dispatch } = useCart();
   const [session, setSession] = React.useState<Session | null>(null);
-  
+
   const shippingAddress: ShippingAddress = React.useMemo(() => {
     try {
       return JSON.parse(localStorage.getItem("shippingAddress") || "{}");
@@ -262,7 +262,7 @@ const Payment: React.FC = () => {
         console.warn("No session user id found for logging order attempt.");
         return;
       }
-      
+
       console.log(`Logging order attempt with status: ${status}`, {
         user_id: session.user.id,
         total_amount: total,
@@ -298,7 +298,8 @@ const Payment: React.FC = () => {
     script.onload = () => {
       if (window.Razorpay) {
         const options = {
-          key: "rzp_live_SVqGXdnQFxriZN",
+          // key: "rzp_live_SVqGXdnQFxriZN",
+          key: "rzp_test_SWA3ntzD7zvvDk",
           amount: Math.round(total * 100),
           currency: "INR",
           name: "Your Store",
@@ -315,7 +316,7 @@ const Payment: React.FC = () => {
               // 🟢 Single call to Supabase Edge Function to handle EVERYTHING
               // (Order creation, Order Items, and Shiprocket Sync)
               toast.info("Processing your order...");
-              
+
               const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('shiprocket', {
                 body: {
                   action: 'checkout',
@@ -334,7 +335,7 @@ const Payment: React.FC = () => {
 
               if (checkoutData && checkoutData.success) {
                 toast.success("Order placed successfully!");
-                
+
                 // ✅ Clear cart and move on
                 setTimeout(() => {
                   dispatch({ type: 'CLEAR_CART' });
@@ -351,7 +352,7 @@ const Payment: React.FC = () => {
             }
           },
           modal: {
-            ondismiss: function() {
+            ondismiss: function () {
               toast.info("Payment cancelled.");
               logAbandonedOrder('abandoned');
             }
