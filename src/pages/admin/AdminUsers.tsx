@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { ShieldAlert, ShieldCheck } from 'lucide-react';
+import { ShieldAlert, ShieldCheck, Download } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 const AdminUsers = () => {
@@ -44,12 +44,59 @@ const AdminUsers = () => {
     }
   };
 
+  const exportToCSV = () => {
+    if (users.length === 0) {
+      toast.warning("No user data to export.");
+      return;
+    }
+
+    try {
+      const headers = ["User ID", "First Name", "Last Name", "Email", "Phone", "Gender", "Role", "Status", "Created At"];
+      const csvData = users.map(user => [
+        user.id,
+        user.first_name || 'N/A',
+        user.last_name || 'N/A',
+        user.email || 'N/A',
+        user.phone_number || 'N/A',
+        user.gender || 'N/A',
+        user.role || 'user',
+        user.is_blocked ? 'Blocked' : 'Active',
+        user.created_at ? new Date(user.created_at).toLocaleString() : 'N/A'
+      ]);
+
+      const csvContent = [headers, ...csvData]
+        .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+        .join("\n");
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `terraskin_users_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("User data exported successfully.");
+    } catch (error) {
+      toast.error("Failed to export user data.");
+      console.error("Export error:", error);
+    }
+  };
+
   if (loading) return <div className="text-gray-500">Loading user profiles...</div>;
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6 sm:mb-8 border-b pb-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 border-b pb-4 gap-4">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 font-['Playfair_Display']">User Security & Profiles</h1>
+        <button 
+          onClick={exportToCSV}
+          className="flex items-center gap-2 bg-[#8d4745] text-white px-4 py-2 rounded-lg hover:bg-[#7a3f3d] transition-colors shadow-sm text-sm font-medium"
+        >
+          <Download size={18} />
+          Download Data
+        </button>
       </div>
 
       <div className="overflow-x-auto bg-white rounded-lg border border-gray-200 shadow-sm -mx-4 sm:mx-0 mb-6">
