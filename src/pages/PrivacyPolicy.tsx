@@ -5,9 +5,9 @@ const PrivacyPolicy: React.FC = () => {
     <div className="min-h-screen bg-white pt-24 pb-16 px-4 sm:px-6 lg:px-8 font-['Inter']">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-gray-900 mb-8 font-['Playfair_Display'] text-center">Privacy Policy</h1>
-        
+
         <div className="prose prose-lg text-gray-600 space-y-6">
-          <p className="text-sm text-gray-500 italic mb-10 text-center">Last Updated: March 26, 2026</p>
+          <p className="text-sm text-gray-500 italic mb-10 text-center">Last Updated: March 27, 2026</p>
 
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4 font-['Playfair_Display']">1. Introduction</h2>
@@ -57,14 +57,23 @@ const PrivacyPolicy: React.FC = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 font-['Playfair_Display']">6. Your Legal Rights</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 font-['Playfair_Display']">6. Refund & Cancellation Policy</h2>
+            <p>
+              We offer refunds for cancelled orders; however, the refund amount will be issued after deducting applicable taxes and platform fees, provided the order is cancelled before it is handed over to our shipping partner (Shiprocket).
+              Once an order status is updated to ‘Shipped’ or ‘In Transit,’ it can no longer be cancelled, and no refund will be issued.
+              Refunds for eligible cancellations are automatically processed to the original payment method via Razorpay.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 font-['Playfair_Display']">7. Your Legal Rights</h2>
             <p>
               Under certain circumstances, you have rights under data protection laws in relation to your personal data, including the right to request access, correction, erasure, restriction, transfer, to object to processing, to portability of data and (where the lawful ground of processing is consent) to withdraw consent.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 font-['Playfair_Display']">7. Contact Us</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 font-['Playfair_Display']">8. Contact Us</h2>
             <p>
               If you have any questions about this privacy policy or our privacy practices, please contact us at:
             </p>
