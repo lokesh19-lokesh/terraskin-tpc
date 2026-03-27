@@ -187,7 +187,7 @@ const AboutPage: React.FC = () => {
         <AnimatedSection className="py-16 bg-[#8d4745] text-white">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl md:text-4xl font-bold font-['Playfair_Display'] mb-6">
-              Join the TarraSkin Family
+              Join the TerraSkin Family
             </h2>
             <p className="text-xl mb-8 opacity-90">
               Experience the difference that premium, science-backed skincare can make
