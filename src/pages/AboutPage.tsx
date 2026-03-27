@@ -164,7 +164,7 @@ const AboutPage: React.FC = () => {
                   This field allows me to combine creativity with helping people feel confident and happy in their own skin.
                 </p>
                 <p className="bg-orange-50 p-6 rounded-xl border-l-4 border-[#8d4745] italic text-gray-800">
-                  "Beauty isn’t just about looks—it’s about self-expression and spreading positivity."
+                  "Beauty isn’t just about looks—it’s about self-expression and building self confidence"
                 </p>
               </div>
 
