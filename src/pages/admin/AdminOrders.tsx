@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { toast } from 'react-toastify';
-import { Download, Filter, Search, RefreshCcw } from 'lucide-react';
+import { Download, Filter, Search, RefreshCcw, BarChart3 } from 'lucide-react';
+import OrderStats from '../../components/admin/OrderStats';
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState<any[]>([]);
@@ -9,6 +10,7 @@ const AdminOrders = () => {
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [showStats, setShowStats] = useState(false);
 
   useEffect(() => {
     fetchOrdersAndProfiles();
@@ -19,7 +21,13 @@ const AdminOrders = () => {
       // Fetch Orders
       const { data: ordersData, error: ordersError } = await supabase
         .from('orders')
-        .select('*')
+        .select(`
+          *,
+          order_items (
+            *,
+            products (*)
+          )
+        `)
         .order('created_at', { ascending: false });
         
       if (ordersError) throw ordersError;
@@ -155,8 +163,18 @@ const AdminOrders = () => {
               <option value="cancelled">Cancelled</option>
               <option value="abandoned">Abandoned</option>
               <option value="failed">Failed Payment</option>
+              <option value="refunded">Refunded</option>
             </select>
           </div>
+          <button 
+            onClick={() => setShowStats(!showStats)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors border text-sm font-medium ${
+              showStats ? 'bg-[#8d4745] text-white border-[#8d4745]' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+            }`}
+          >
+            <BarChart3 size={18} />
+            {showStats ? 'Hide Insights' : 'Show Insights'}
+          </button>
           <button 
             onClick={exportToCSV}
             className="flex items-center gap-2 bg-[#8d4745] text-white px-4 py-2 rounded-lg hover:bg-[#7a3f3d] transition-colors shadow-sm text-sm font-medium"
@@ -166,6 +184,8 @@ const AdminOrders = () => {
           </button>
         </div>
       </div>
+
+      {showStats && <OrderStats orders={orders} />}
 
       <div className="overflow-x-auto bg-white rounded-lg border border-gray-200 shadow-sm -mx-4 sm:mx-0 mb-6">
         <table className="min-w-[900px] w-full divide-y divide-gray-200 text-sm">
@@ -210,6 +230,7 @@ const AdminOrders = () => {
                         ${order.status === 'cancelled' ? 'bg-red-100 text-red-800 border-red-200' : ''}
                         ${order.status === 'abandoned' ? 'bg-gray-200 text-gray-800 border-gray-300' : ''}
                         ${order.status === 'failed' ? 'bg-orange-100 text-orange-800 border-orange-200' : ''}
+                        ${order.status === 'refunded' ? 'bg-pink-100 text-pink-800 border-pink-200' : ''}
                       `}
                     >
                       <option value="pending">Pending</option>
@@ -219,6 +240,7 @@ const AdminOrders = () => {
                       <option value="cancelled">Cancelled</option>
                       <option value="abandoned">Abandoned</option>
                       <option value="failed">Failed Payment</option>
+                      <option value="refunded">Refunded</option>
                     </select>
                     {order.shiprocket_status && (
                       <span className="text-[10px] text-gray-400">SR: {order.shiprocket_status}</span>
