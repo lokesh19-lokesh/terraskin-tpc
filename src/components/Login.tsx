@@ -72,21 +72,21 @@ const Login: React.FC = () => {
 
       {/* Navbar relative z-10 */}
       <nav className="relative z-10 flex flex-row justify-between items-center px-8 py-6 max-w-7xl mx-auto">
-        <div className="flex items-center">
+        <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
           <img src={logo} alt="TerraSkin Logo" className="h-[70px] w-auto filter brightness-0 invert" />
-        </div>
+        </Link>
         
         <div className="hidden md:flex text-sm text-white gap-10">
           <Link to="/login-about" className="hover:opacity-80 transition-opacity cursor-pointer">About</Link>
           <Link to="/login-contact" className="hover:opacity-80 transition-opacity cursor-pointer">Reach Us</Link>
         </div>
 
-        <button 
-          onClick={() => setShowForm(!showForm)}
-          className="liquid-glass text-white rounded-full px-6 py-2.5 text-sm hover:scale-[1.03] transition-transform"
+        <Link 
+          to="/"
+          className="liquid-glass text-white rounded-full px-8 py-2.5 text-sm hover:scale-[1.03] transition-transform font-medium"
         >
-          {showForm ? "Back" : "Login"}
-        </button>
+          Home
+        </Link>
       </nav>
 
       {/* Hero Content / Form relative z-10 */}
