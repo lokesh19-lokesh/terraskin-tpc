@@ -199,15 +199,27 @@ const Orders: React.FC = () => {
                   {trackingInfo[order.id] && (
                     <div className="bg-white border border-gray-100 rounded-lg p-3 animate-fade-in">
                       <div className="flex items-center gap-2 mb-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <div className={`w-2 h-2 rounded-full animate-pulse ${
+                          trackingInfo[order.id]?.tracking_data?.shipment_track?.[0]?.current_status ? 'bg-green-500' : 'bg-amber-500'
+                        }`}></div>
                         <p className="text-xs font-bold text-gray-800 uppercase tracking-tight">
-                          Live Status: {trackingInfo[order.id]?.tracking_data?.shipment_track?.[0]?.current_status || 'Updating...'}
+                          Live Status: {
+                            trackingInfo[order.id]?.tracking_data?.shipment_track?.[0]?.current_status || 
+                            trackingInfo[order.id]?.tracking_data?.shipment_status_name ||
+                            'Awaiting Pickup'
+                          }
                         </p>
                       </div>
                       
                       {trackingInfo[order.id]?.tracking_data?.shipment_track?.[0]?.scanned_location && (
-                        <p className="text-xs text-gray-500">
-                          Location: {trackingInfo[order.id].tracking_data.shipment_track[0].scanned_location}
+                        <p className="text-xs text-gray-500 italic">
+                          Last Location: {trackingInfo[order.id].tracking_data.shipment_track[0].scanned_location}
+                        </p>
+                      )}
+                      
+                      {!trackingInfo[order.id]?.tracking_data?.shipment_track?.[0] && (
+                        <p className="text-[10px] text-gray-400">
+                          Tracking updates typically appear within 24-48 hours after pickup.
                         </p>
                       )}
                       

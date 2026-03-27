@@ -40,12 +40,16 @@ app.post('/api/shiprocket/create-order', async (req, res) => {
       await getShiprocketToken();
     }
 
+    const nameParts = (shippingAddress.name || "Guest").trim().split(/\s+/);
+    const firstName = nameParts[0];
+    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : ".";
+
     const orderData = {
       order_id: orderId,
       order_date: new Date().toISOString().split('T')[0],
-      pickup_location: "Primary", // Should be configured in Shiprocket
-      billing_customer_name: shippingAddress.name,
-      billing_last_name: "",
+      pickup_location: "Primary", 
+      billing_customer_name: firstName,
+      billing_last_name: lastName,
       billing_address: shippingAddress.street,
       billing_city: shippingAddress.city,
       billing_pincode: shippingAddress.pincode,

@@ -317,12 +317,20 @@ const Payment: React.FC = () => {
               // (Order creation, Order Items, and Shiprocket Sync)
               toast.info("Processing your order...");
 
+              const nameParts = (shippingAddress.name || "Guest").trim().split(/\s+/);
+              const firstName = nameParts[0];
+              const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : ".";
+
               const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('shiprocket', {
                 body: {
                   action: 'checkout',
                   userId: session.user.id,
                   totalAmount: total,
-                  shippingAddress: shippingAddress,
+                  shippingAddress: {
+                    ...shippingAddress,
+                    billing_customer_name: firstName,
+                    billing_last_name: lastName
+                  },
                   paymentId: response.razorpay_payment_id,
                   items: state.items
                 }
