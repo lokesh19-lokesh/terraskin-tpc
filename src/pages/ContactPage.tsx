@@ -167,7 +167,7 @@ const ContactPage: React.FC = () => {
                     <div>
                       <h3 className="font-semibold text-gray-900 mb-1">Visit Our Store</h3>
                       <p className="text-gray-600">
-                        Hyderabad, Telangana, India
+                        D.no: 28-6-755, Hamali colony, Housing Board, near RTO office, 515001, Anantapur, Andhrapradesh
                       </p>
                     </div>
                   </div>
@@ -179,7 +179,7 @@ const ContactPage: React.FC = () => {
                     <div>
                       <h3 className="font-semibold text-gray-900 mb-1">Call Us</h3>
                       <p className="text-gray-600">
-                        +91-9834763423
+                        9836985999
                       </p>
                     </div>
                   </div>
@@ -191,7 +191,7 @@ const ContactPage: React.FC = () => {
                     <div>
                       <h3 className="font-semibold text-gray-900 mb-1">Email Us</h3>
                       <p className="text-gray-600">
-                        info@terraskin.com<br />
+                        info@terraskin.in<br />
                         We'll respond within 24 hours
                       </p>
                     </div>
@@ -246,7 +246,7 @@ const ContactPage: React.FC = () => {
           <div className="text-center text-gray-600">
             <MapPin className="h-12 w-12 mx-auto mb-4" />
             <p>Interactive map would be integrated here</p>
-            <p className="text-sm">Hyderabad, Telangana, India</p>
+            <p className="text-sm">D.no: 28-6-755, Hamali colony, Housing Board, near RTO office, 515001, Anantapur, Andhrapradesh</p>
           </div>
         </div>
       </AnimatedSection>
