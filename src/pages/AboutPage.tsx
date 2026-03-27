@@ -31,7 +31,7 @@ const AboutPage: React.FC = () => {
               Our Story
             </h2>
             <p className="text-lg text-gray-600 leading-relaxed">
-              Founded by dermatologist Tanuja, TerraSkin was born from a passion for creating
+              Founded by Tanuja, TerraSkin was born from a passion for creating
               effective, gentle skincare solutions that work in harmony with your skin's natural processes.
               After years of research and development, we've crafted a collection of products that combine
               the best of nature and science.
