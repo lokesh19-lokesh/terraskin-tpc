@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
-import { MapPin, Clock, User, Plus } from "lucide-react";
+import { MapPin, Clock, User, Plus, X } from "lucide-react";
 import { supabase } from "../lib/supabase";
 
 const PlaceOrderPage: React.FC = () => {
@@ -9,13 +9,20 @@ const PlaceOrderPage: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
+    email: "",
     mobile: "",
-    city: "",
+    doorNo: "",
     street: "",
+    landmark: "",
+    city: "",
     pincode: "",
-    country: "",
+    country: "India",
   });
   const [recentAddresses, setRecentAddresses] = useState<any[]>([]);
+  const [hiddenAddresses, setHiddenAddresses] = useState<string[]>(() => {
+    const saved = localStorage.getItem("hiddenAddresses");
+    return saved ? JSON.parse(saved) : [];
+  });
 
   React.useEffect(() => {
     // Load from localStorage immediately
@@ -48,12 +55,12 @@ const PlaceOrderPage: React.FC = () => {
       if (error) throw error;
 
       if (orders) {
-        // Extract unique addresses based on street and name
         const unique = orders.reduce((acc: any[], current: any) => {
           const addr = current.shipping_address;
           if (!addr) return acc;
           const exists = acc.find(a => a.street === addr.street && a.name === addr.name);
-          if (!exists) acc.push(addr);
+          const isHidden = hiddenAddresses.includes(JSON.stringify(addr));
+          if (!exists && !isHidden) acc.push(addr);
           return acc;
         }, []);
         setRecentAddresses(unique);
@@ -72,11 +79,34 @@ const PlaceOrderPage: React.FC = () => {
   };
 
   const handleProceedToPayment = () => {
-    // ✅ Save address details (optional: send to backend or localStorage)
+    // Basic validation
+    const { name, email, mobile, doorNo, street, city, pincode } = formData;
+    if (!name || !email || !mobile || !doorNo || !street || !city || !pincode) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    // Full name validation (at least two words)
+    const nameParts = name.trim().split(/\s+/);
+    if (nameParts.length < 2) {
+      alert("Please enter your full name (First Name and Last Name).");
+      return;
+    }
+
+    // ✅ Save address details
     localStorage.setItem("shippingAddress", JSON.stringify(formData));
 
     // ✅ Navigate to Payment Page
     navigate("/payment");
+  };
+
+  const handleDeleteAddress = (address: any, e: React.MouseEvent) => {
+    e.stopPropagation(); // Don't select the address
+    const addrStr = JSON.stringify(address);
+    const updatedHidden = [...hiddenAddresses, addrStr];
+    setHiddenAddresses(updatedHidden);
+    localStorage.setItem("hiddenAddresses", JSON.stringify(updatedHidden));
+    setRecentAddresses(prev => prev.filter(a => JSON.stringify(a) !== addrStr));
   };
 
   return (
@@ -93,25 +123,39 @@ const PlaceOrderPage: React.FC = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {recentAddresses.map((addr, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => selectAddress(addr)}
-                    className="text-left p-4 border rounded-xl hover:border-[#8d4745] hover:bg-orange-50/30 transition-all group relative"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="mt-1 bg-orange-100 p-2 rounded-lg text-[#8d4745] group-hover:bg-[#8d4745] group-hover:text-white transition-colors">
+                  <div key={idx} className="relative group">
+                    <button
+                      onClick={() => selectAddress(addr)}
+                      className={`w-full text-left p-4 border rounded-xl transition-all flex items-start gap-3 hover:shadow-md ${
+                        JSON.stringify(formData) === JSON.stringify(addr)
+                          ? "border-[#8d4745] bg-[#8d4745]/5"
+                          : "border-gray-100 bg-white hover:border-[#8d4745]"
+                      }`}
+                    >
+                      <div className={`p-2 rounded-lg ${
+                        JSON.stringify(formData) === JSON.stringify(addr)
+                          ? "bg-[#8d4745] text-white"
+                          : "bg-orange-50 text-orange-600"
+                      }`}>
                         <MapPin size={16} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-gray-900 truncate">{addr.name}</p>
-                        <p className="text-sm text-gray-500 truncate">{addr.street}</p>
+                        <p className="text-sm text-gray-500 truncate">{addr.doorNo ? `${addr.doorNo}, ` : ''}{addr.street}</p>
                         <p className="text-xs text-gray-400">{addr.city}, {addr.pincode}</p>
                       </div>
-                    </div>
-                  </button>
+                    </button>
+                    <button
+                      onClick={(e) => handleDeleteAddress(addr, e)}
+                      className="absolute top-2 right-2 p-1 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Remove from recent"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
                 ))}
                 <button
-                  onClick={() => setFormData({ name: "", mobile: "", city: "", street: "", pincode: "", country: "" })}
+                  onClick={() => setFormData({ name: "", email: "", mobile: "", doorNo: "", street: "", landmark: "", city: "", pincode: "", country: "India" })}
                   className="text-left p-4 border border-dashed rounded-xl hover:border-[#8d4745] hover:bg-gray-50 transition-all flex items-center justify-center gap-2 text-gray-500 hover:text-[#8d4745]"
                 >
                   <Plus size={20} />
@@ -136,7 +180,20 @@ const PlaceOrderPage: React.FC = () => {
                 value={formData.name}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#8d4745] outline-none"
+                required
               />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#8d4745] outline-none"
+                required
+              />
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 type="text"
                 name="mobile"
@@ -144,14 +201,34 @@ const PlaceOrderPage: React.FC = () => {
                 value={formData.mobile}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#8d4745] outline-none"
+                required
+              />
+              <input
+                type="text"
+                name="doorNo"
+                placeholder="Door No. / House No."
+                value={formData.doorNo}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#8d4745] outline-none"
+                required
               />
             </div>
 
             <input
               type="text"
               name="street"
-              placeholder="Street Address"
+              placeholder="Street / Area Name"
               value={formData.street}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#8d4745] outline-none"
+              required
+            />
+
+            <input
+              type="text"
+              name="landmark"
+              placeholder="Landmark (Optional)"
+              value={formData.landmark}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#8d4745] outline-none"
             />
@@ -164,6 +241,7 @@ const PlaceOrderPage: React.FC = () => {
                 value={formData.city}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#8d4745] outline-none"
+                required
               />
               <input
                 type="text"
@@ -172,6 +250,7 @@ const PlaceOrderPage: React.FC = () => {
                 value={formData.pincode}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#8d4745] outline-none"
+                required
               />
             </div>
 

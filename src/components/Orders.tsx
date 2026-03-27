@@ -160,7 +160,13 @@ const Orders: React.FC = () => {
                 <div>
                   <p className="text-xs text-gray-500 mb-1">Shipping to:</p>
                   <p className="text-sm font-medium text-gray-700">
-                    {order.shipping_address?.name}, {order.shipping_address?.city}
+                    {order.shipping_address?.doorNo ? `${order.shipping_address.doorNo}, ` : ''}{order.shipping_address?.street}
+                  </p>
+                  {order.shipping_address?.landmark && (
+                    <p className="text-xs text-gray-400">Landmark: {order.shipping_address.landmark}</p>
+                  )}
+                  <p className="text-xs text-gray-500 italic mt-0.5">
+                    {order.shipping_address?.city}, {order.shipping_address?.pincode} | Ph: {order.shipping_address?.mobile}
                   </p>
                 </div>
                 <div className="text-right">

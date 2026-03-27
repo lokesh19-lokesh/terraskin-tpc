@@ -195,6 +195,7 @@ const AdminOrders = () => {
               <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Customer</th>
               <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Total Amount</th>
               <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Date</th>
+              <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Shipping Details</th>
               <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Shiprocket ID</th>
               <th className="px-6 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">Tracking Status</th>
             </tr>
@@ -213,6 +214,22 @@ const AdminOrders = () => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-gray-500 text-xs">
                   {new Date(order.created_at).toLocaleDateString()}
+                </td>
+                <td className="px-6 py-4 text-xs text-gray-500 max-w-[200px]">
+                  <div className="flex flex-col">
+                    <span className="font-medium text-gray-700">
+                      {order.shipping_address?.doorNo ? `${order.shipping_address.doorNo}, ` : ''}{order.shipping_address?.street}
+                    </span>
+                    {order.shipping_address?.landmark && (
+                      <span className="text-[10px] text-gray-400">Landmark: {order.shipping_address.landmark}</span>
+                    )}
+                    <span className="text-[10px]">
+                      {order.shipping_address?.city}, {order.shipping_address?.pincode}
+                    </span>
+                    <span className="text-[10px] font-mono mt-1 text-[#8d4745]">
+                      {order.shipping_address?.mobile} | {order.shipping_address?.email || 'No Email'}
+                    </span>
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-gray-500 text-xs">
                   {order.shiprocket_order_id || 'N/A'}
