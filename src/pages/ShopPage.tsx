@@ -9,21 +9,23 @@ import { FilterState } from '../types';
 const ShopPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const initialCategory = searchParams.get('category')?.toLowerCase() || 'all';
-
+  const initialSearch = searchParams.get('search')?.toLowerCase() || '';
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
     category: initialCategory,
     priceRange: [0, 1000],
     skinType: 'all',
-    bestSellers: false
+    bestSellers: false,
+    search: initialSearch
   });
 
   const [products, setProducts] = useState<any[]>([]);
 
   useEffect(() => {
-    // Update category filter if URL param changes
+    // Update category and search filters if URL params change
     const urlCategory = searchParams.get('category')?.toLowerCase() || 'all';
-    setFilters(prev => ({ ...prev, category: urlCategory }));
+    const urlSearch = searchParams.get('search')?.toLowerCase() || '';
+    setFilters(prev => ({ ...prev, category: urlCategory, search: urlSearch }));
   }, [searchParams]);
 
   useEffect(() => {
@@ -39,6 +41,11 @@ const ShopPage: React.FC = () => {
 
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
+      // Search filter
+      if (filters.search && !product.name.toLowerCase().includes(filters.search.toLowerCase())) {
+        return false;
+      }
+
       // Category filter
       if (filters.category !== 'all' && product.category !== filters.category) {
         return false;
@@ -74,7 +81,8 @@ const ShopPage: React.FC = () => {
       category: 'all',
       priceRange: [0, 1000],
       skinType: 'all',
-      bestSellers: false
+      bestSellers: false,
+      search: ''
     });
   };
 
@@ -213,13 +221,15 @@ const ShopPage: React.FC = () => {
               {filteredProducts.length === 0 && (
                 <div className="text-center py-12">
                   <p className="text-gray-500 text-lg">
-                    No products found matching your filters.
+                    {filters.search 
+                      ? `No products found for "${filters.search}"`
+                      : "No products found matching your filters."}
                   </p>
                   <button
                     onClick={clearFilters}
                     className="mt-4 bg-[#8d4745] text-white px-6 py-2 rounded-full hover:bg-[#7a3f3d] transition-colors duration-300"
                   >
-                    Clear Filters
+                    Clear All
                   </button>
                 </div>
               )}

@@ -36,4 +36,5 @@ export interface FilterState {
   priceRange: [number, number];
   skinType: string;
   bestSellers: boolean;
+  search?: string;
 }

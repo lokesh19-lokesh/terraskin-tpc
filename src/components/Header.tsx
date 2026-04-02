@@ -142,6 +142,8 @@ const Header: React.FC = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [firstName, setFirstName] = useState<string | null>(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   React.useEffect(() => {
     // 1. Initial session check
@@ -182,6 +184,14 @@ const Header: React.FC = () => {
     toast.success("✅ Logged out successfully!", { autoClose: 2000 });
     navigate("/login");
   };
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
 
   const isLoggedIn = !!session;
 
@@ -212,7 +222,22 @@ const Header: React.FC = () => {
 
           {/* Right side actions */}
           <div className="flex items-center space-x-1 sm:space-x-4 relative">
-            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
+            <div className={`flex items-center transition-all duration-300 ${isSearchOpen ? 'w-40 sm:w-64 opacity-100' : 'w-0 opacity-0 overflow-hidden'}`}>
+              <form onSubmit={handleSearchSubmit} className="w-full">
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full px-4 py-1.5 text-sm border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#8d4745]/20 focus:border-[#8d4745]"
+                  autoFocus={isSearchOpen}
+                />
+              </form>
+            </div>
+            <button
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+            >
               <Search className="h-5 w-5 text-gray-700" />
             </button>
 
