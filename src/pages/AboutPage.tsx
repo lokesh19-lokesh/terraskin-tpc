@@ -4,6 +4,7 @@ import { Award, Heart, Leaf, Users } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
 import abt from "../images/about-us.png";
 import founderImg from "../images/tanus.jpeg";
+import SEO from '../components/SEO';
 
 const AboutPage: React.FC = () => {
   const location = useLocation();
@@ -11,6 +12,10 @@ const AboutPage: React.FC = () => {
 
   return (
     <div style={{ backgroundColor: '#f4ece6' }} className="pt-24">
+      <SEO 
+        title="Our Story & Values"
+        description="Learn about the journey of TerraSkin, our commitment to natural ingredients, and our mission to provide effective, dermatologist-approved skincare for everyone."
+      />
       {/* Hero Section */}
       <AnimatedSection className="bg-gradient-to-r from-[#8d4745] to-[#a05552] text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

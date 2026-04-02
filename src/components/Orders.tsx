@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { toast } from "react-toastify";
+import SEO from "./SEO";
 
 const Orders: React.FC = () => {
   const [orders, setOrders] = useState<any[]>([]);
@@ -114,8 +115,9 @@ const Orders: React.FC = () => {
 
   return (
     <div className="min-h-screen pt-24 p-6 bg-gray-50 font-['Inter']">
+      <SEO title="My Orders" description="View your order history and track the live status of your TerraSkin skincare purchases." />
       <div className="max-w-4xl mx-auto">
-        <h2 className="text-3xl font-bold text-[#8d4745] mb-8 font-['Playfair_Display']">My Orders</h2>
+        <h1 className="text-3xl font-bold text-[#8d4745] mb-8 font-['Playfair_Display']">My Orders</h1>
         <div className="space-y-6">
           {orders.map((order: any) => (
             <div key={order.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
@@ -144,7 +146,7 @@ const Orders: React.FC = () => {
                     <div key={item.id} className="flex justify-between items-center">
                       <div className="flex items-center gap-3">
                         {item.products?.image_url && (
-                          <img src={item.products.image_url} alt="" className="w-10 h-10 rounded object-cover" />
+                          <img src={item.products.image_url} alt={item.products.name} className="w-10 h-10 rounded object-cover" />
                         )}
                         <div>
                           <p className="text-sm font-medium text-gray-800">{item.products?.name || 'Unknown Product'}</p>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import AnimatedSection from '../components/AnimatedSection';
+import SEO from '../components/SEO';
 
 const CartPage: React.FC = () => {
   const { state, dispatch } = useCart();
@@ -23,6 +24,7 @@ const CartPage: React.FC = () => {
   if (state.items.length === 0) {
     return (
       <div className="pt-24 min-h-screen bg-gray-50">
+        <SEO title="My Shopping Cart" description="Review your selected TerraSkin skincare products and proceed to secure checkout." />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <AnimatedSection className="text-center">
             <ShoppingBag className="h-24 w-24 text-gray-300 mx-auto mb-6" />
@@ -46,6 +48,7 @@ const CartPage: React.FC = () => {
 
   return (
     <div className="pt-24 min-h-screen bg-gray-50">
+      <SEO title="My Shopping Cart" description="Review your selected TerraSkin skincare products and proceed to secure checkout." />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <AnimatedSection>
           <h1 className="text-3xl font-bold text-gray-900 font-['Playfair_Display'] mb-8">

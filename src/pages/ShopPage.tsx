@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard';
 import AnimatedSection from '../components/AnimatedSection';
 import { supabase } from '../lib/supabase';
 import { FilterState } from '../types';
+import SEO from '../components/SEO';
 
 const ShopPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -88,6 +89,10 @@ const ShopPage: React.FC = () => {
 
   return (
     <div style={{ backgroundColor: '#f4ece6' }} className="pt-24 min-h-screen bg-gray-50">
+      <SEO 
+        title="Shop All Skincare Products"
+        description="Browse our complete collection of natural serums, moisturisers, and cleansers. Dermatologist-approved skincare solutions for every skin concern."
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <AnimatedSection className="mb-8">

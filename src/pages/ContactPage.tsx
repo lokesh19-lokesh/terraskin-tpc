@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Plus, Minus } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
+import SEO from '../components/SEO';
 
 const ContactPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -47,6 +48,10 @@ const ContactPage: React.FC = () => {
 
   return (
     <div style={{ backgroundColor: '#f4ece6' }} className="pt-16">
+      <SEO 
+        title="Contact Us | Skincare Advice & Support"
+        description="Have questions? Reach out to TerraSkin for personalized skincare advice, order support, or partnership inquiries. Visit our store in Anantapur or contact us online."
+      />
       {/* Hero Section */}
       <AnimatedSection className="bg-gradient-to-r from-[#8d4745] to-[#a05552] text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { useCart } from '../context/CartContext';
 import ProductCard from '../components/ProductCard';
 import AnimatedSection from '../components/AnimatedSection';
+import SEO from '../components/SEO';
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -93,6 +94,12 @@ const ProductDetails: React.FC = () => {
 
   return (
     <div className="pt-24 min-h-screen bg-gray-50">
+      <SEO 
+        title={product.name}
+        description={product.description}
+        ogImage={product.image_url || imagesArray[0]}
+        ogType="product"
+      />
       {/* Breadcrumb */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

@@ -1,8 +1,10 @@
 import React from 'react';
+import SEO from '../components/SEO';
 
 const PrivacyPolicy: React.FC = () => {
   return (
     <div className="min-h-screen bg-white pt-24 pb-16 px-4 sm:px-6 lg:px-8 font-['Inter']">
+      <SEO title="Privacy Policy" description="Learn about TerraSkin's privacy practices, how we collect and use your data, and how we protect your personal information." />
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-gray-900 mb-8 font-['Playfair_Display'] text-center">Privacy Policy</h1>
 

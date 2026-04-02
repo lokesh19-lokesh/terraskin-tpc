@@ -4,6 +4,7 @@ import { Star, Award, Leaf, Heart } from 'lucide-react';
 import HeroSlider from '../components/HeroSlider';
 import ProductCard from '../components/ProductCard';
 import AnimatedSection from '../components/AnimatedSection';
+import SEO from '../components/SEO';
 import { testimonials } from '../data/products';
 import { supabase } from '../lib/supabase';
 import { Product } from '../types';
@@ -141,6 +142,10 @@ const HomePage: React.FC = () => {
 
   return (
     <div style={{ backgroundColor: '#f4ece6' }} className="pt-16 text-[#f4ece6]">
+      <SEO 
+        title="TerraSkin | Premium Skincare for Healthy, Radiant Skin"
+        description="Discover TerraSkin's collection of premium, dermatologist-tested skincare products. Natural ingredients and science-backed formulations for your best skin yet."
+      />
       {/* Hero Slider */}
       <HeroSlider />
 

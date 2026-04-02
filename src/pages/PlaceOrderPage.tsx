@@ -3,6 +3,7 @@ import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { MapPin, Clock, User, Plus, X } from "lucide-react";
 import { supabase } from "../lib/supabase";
+import SEO from "../components/SEO";
 
 const PlaceOrderPage: React.FC = () => {
   const { state } = useCart();
@@ -116,6 +117,7 @@ const PlaceOrderPage: React.FC = () => {
 
   return (
     <div className="pt-24 min-h-screen bg-gray-50">
+      <SEO title="Checkout | Shipping Details" description="Provide your shipping address and contact details to complete your TerraSkin order." />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Address Form */}
@@ -173,7 +175,7 @@ const PlaceOrderPage: React.FC = () => {
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <div className="flex items-center gap-2 mb-4 text-[#8d4745]">
               <User size={20} />
-              <h2 className="text-xl font-bold text-gray-900">Shipping Details</h2>
+              <h1 className="text-xl font-bold text-gray-900">Shipping Details</h1>
             </div>
 
           <div className="space-y-4">
