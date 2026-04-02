@@ -8,6 +8,7 @@ interface SEOProps {
   ogType?: string;
   ogImage?: string;
   twitterHandle?: string;
+  schema?: object;
 }
 
 const SEO: React.FC<SEOProps> = ({
@@ -16,7 +17,8 @@ const SEO: React.FC<SEOProps> = ({
   canonical,
   ogType = "website",
   ogImage = "/src/images/terra-skin-logo.png",
-  twitterHandle = "@terraskin"
+  twitterHandle = "@terraskin",
+  schema
 }) => {
   const siteTitle = "TerraSkin";
   const fullTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
@@ -40,6 +42,13 @@ const SEO: React.FC<SEOProps> = ({
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
       {twitterHandle && <meta name="twitter:site" content={twitterHandle} />}
+
+      {/* JSON-LD Schema for AEO */}
+      {schema && (
+        <script type="application/ld+json">
+          {JSON.stringify(schema)}
+        </script>
+      )}
     </Helmet>
   );
 };

@@ -145,6 +145,23 @@ const HomePage: React.FC = () => {
       <SEO 
         title="TerraSkin | Premium Skincare for Healthy, Radiant Skin"
         description="Discover TerraSkin's collection of premium, dermatologist-tested skincare products. Natural ingredients and science-backed formulations for your best skin yet."
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "TerraSkin",
+          "url": "https://terraskin.in",
+          "logo": "https://terraskin.in/src/images/terra-skin-logo.png",
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "9836985999",
+            "contactType": "customer service"
+          },
+          "sameAs": [
+            "https://facebook.com/terraskin",
+            "https://instagram.com/terraskin",
+            "https://twitter.com/terraskin"
+          ]
+        }}
       />
       {/* Hero Slider */}
       <HeroSlider />

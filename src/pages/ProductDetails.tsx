@@ -99,6 +99,29 @@ const ProductDetails: React.FC = () => {
         description={product.description}
         ogImage={product.image_url || imagesArray[0]}
         ogType="product"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": product.name,
+          "image": product.image_url || imagesArray[0],
+          "description": product.fullDescription || product.description,
+          "brand": {
+            "@type": "Brand",
+            "name": "TerraSkin"
+          },
+          "offers": {
+            "@type": "Offer",
+            "url": window.location.href,
+            "priceCurrency": "INR",
+            "price": product.price,
+            "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+          },
+          "aggregateRating": product.rating ? {
+            "@type": "AggregateRating",
+            "ratingValue": product.rating,
+            "reviewCount": product.reviews || 0
+          } : undefined
+        }}
       />
       {/* Breadcrumb */}
       <div className="bg-white border-b">

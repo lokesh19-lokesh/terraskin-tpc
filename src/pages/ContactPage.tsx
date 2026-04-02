@@ -47,10 +47,46 @@ const ContactPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ backgroundColor: '#f4ece6' }} className="pt-16">
+    <div className="pt-24 min-h-screen bg-gray-50">
       <SEO 
         title="Contact Us | Skincare Advice & Support"
-        description="Have questions? Reach out to TerraSkin for personalized skincare advice, order support, or partnership inquiries. Visit our store in Anantapur or contact us online."
+        description="Have questions about TerraSkin products or need personalized skincare advice? Contact our experts for support."
+        schema={{
+          "@context": "https://schema.org",
+          "@type": ["LocalBusiness", "FAQPage"],
+          "name": "TerraSkin",
+          "image": "https://terraskin.in/src/images/terra-skin-logo.png",
+          "telephone": "9836985999",
+          "email": "info@terraskin.in",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "D.no: 28-6-755, Housing Board, near RTO office",
+            "addressLocality": "Anantapur",
+            "addressRegion": "Andhra Pradesh",
+            "postalCode": "515001",
+            "addressCountry": "IN"
+          },
+          "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday"
+            ],
+            "opens": "09:00",
+            "closes": "19:00"
+          },
+          "mainEntity": faqs.map(faq => ({
+            "@type": "Question",
+            "name": faq.question,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": faq.answer
+            }
+          }))
+        }}
       />
       {/* Hero Section */}
       <AnimatedSection className="bg-gradient-to-r from-[#8d4745] to-[#a05552] text-white py-16">

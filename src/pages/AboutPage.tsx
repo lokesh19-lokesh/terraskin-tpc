@@ -15,6 +15,17 @@ const AboutPage: React.FC = () => {
       <SEO 
         title="Our Story & Values"
         description="Learn about the journey of TerraSkin, our commitment to natural ingredients, and our mission to provide effective, dermatologist-approved skincare for everyone."
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          "mainEntity": {
+            "@type": "Brand",
+            "name": "TerraSkin",
+            "description": "Premium skincare brand with science-backed formulations and natural ingredients.",
+            "slogan": "Transforming skincare with science and nature.",
+            "logo": "https://terraskin.in/src/images/terra-skin-logo.png"
+          }
+        }}
       />
       {/* Hero Section */}
       <AnimatedSection className="bg-gradient-to-r from-[#8d4745] to-[#a05552] text-white py-16">
