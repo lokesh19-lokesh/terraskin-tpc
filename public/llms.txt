@@ -1,0 +1,19 @@
+# TerraSkin
+
+> Premium skincare products for healthy, radiant skin.
+
+TerraSkin combines natural ingredients with science-backed formulations to create effective, gentle skincare solutions.
+
+## Core Pages
+
+- [Shop All](https://terraskin.in/shop): Full collection of natural serums, moisturisers, and cleansers.
+- [About Us](https://terraskin.in/about): The journey of TerraSkin and our commitment to natural beauty.
+- [Contact](https://terraskin.in/contact): Skincare advice and order support.
+- [Privacy Policy](https://terraskin.in/privacy): Our commitment to data protection.
+
+## Brand Values
+
+- **Quality First**: No compromise on ingredients or formulations.
+- **Science-Backed**: Dermatologist-tested and clinically approved.
+- **Natural & Gentle**: Effective solutions that work with your skin.
+- **Cruelty-Free**: 100% ethically sourced and never tested on animals.

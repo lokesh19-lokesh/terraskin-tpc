@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Allow: /shop
+Allow: /about
+Allow: /contact
+Allow: /privacy
+Allow: /product/
+
+Disallow: /orders
+Disallow: /payment
+Disallow: /login
+Disallow: /signup
+Disallow: /PlaceOrderPage
+
+Sitemap: https://terraskin.in/sitemap.xml
