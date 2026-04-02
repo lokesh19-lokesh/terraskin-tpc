@@ -191,7 +191,12 @@ serve(async (req) => {
     // --- 🔙 ACTION: CANCEL ---
     else if (action === 'cancel') {
       const { data: order } = await supabaseAdmin.from('orders').select('payment_id, shiprocket_status').eq('id', orderId).single()
-      if (['SHIPPED', 'DELIVERED'].includes(order?.shiprocket_status)) return new Response(JSON.stringify({ success: false, error: "Already shipped." }), { headers: corsHeaders })
+      const status = (order?.shiprocket_status || "").toUpperCase();
+      const restrictedStatuses = ["PICKED UP", "SHIPPED", "DELIVERED", "IN TRANSIT", "OUT FOR DELIVERY"];
+      
+      if (restrictedStatuses.includes(status)) {
+        return new Response(JSON.stringify({ success: false, error: `Order cannot be cancelled at this stage: ${status}` }), { headers: corsHeaders })
+      }
 
       if (shiprocketOrderId) {
         try {

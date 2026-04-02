@@ -174,14 +174,24 @@ const Orders: React.FC = () => {
                   <p className="text-xs text-gray-500 mb-1">Total Amount:</p>
                   <p className="text-xl font-bold text-[#8d4745]">₹{order.total_amount.toFixed(2)}</p>
                   
-                  {(order.status === 'processing' || order.status === 'pending') && (
-                    <button
-                      onClick={() => handleCancelOrder(order.id, order.shiprocket_order_id)}
-                      className="mt-3 text-xs font-bold text-red-500 hover:text-red-700 border border-red-200 hover:border-red-500 px-3 py-1.5 rounded-lg transition-all"
-                    >
-                      Cancel Order
-                    </button>
-                  )}
+                  {(() => {
+                    const trackingStatus = (trackingInfo[order.id]?.tracking_data?.shipment_track?.[0]?.current_status || 
+                                          trackingInfo[order.id]?.tracking_data?.shipment_status_name || "").toUpperCase();
+                    const isPickedUp = trackingStatus.includes("PICKED UP") || 
+                                     trackingStatus.includes("SHIPPED") || 
+                                     trackingStatus.includes("TRANSIT") || 
+                                     trackingStatus.includes("DELIVERY") || 
+                                     trackingStatus.includes("DELIVERED");
+
+                    return (order.status === 'processing' || order.status === 'pending') && !isPickedUp && (
+                      <button
+                        onClick={() => handleCancelOrder(order.id, order.shiprocket_order_id)}
+                        className="mt-3 text-xs font-bold text-red-500 hover:text-red-700 border border-red-200 hover:border-red-500 px-3 py-1.5 rounded-lg transition-all"
+                      >
+                        Cancel Order
+                      </button>
+                    );
+                  })()}
                 </div>
               </div>
               
