@@ -150,9 +150,12 @@ declare global {
 
 interface ShippingAddress {
   name: string;
+  email: string;
   mobile: string;
-  city: string;
+  doorNo: string;
   street: string;
+  landmark: string;
+  city: string;
   pincode: string;
   country: string;
 }
