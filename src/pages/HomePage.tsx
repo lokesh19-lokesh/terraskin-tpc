@@ -81,27 +81,27 @@ const HomePage: React.FC = () => {
   ];
 
   const benefits = [
-  {
-    id: 1,
-    title: "",
-    image: c1, // replace with your image path
-  },
-  {
-    id: 2,
-    title: "",
-    image: c2,
-  },
-  {
-    id: 3,
-    title: "",
-    image: c3,
-  },
-  {
-    id: 4,
-    title: "",
-    image: c4,
-  },
-];
+    {
+      id: 1,
+      title: "",
+      image: c1, // replace with your image path
+    },
+    {
+      id: 2,
+      title: "",
+      image: c2,
+    },
+    {
+      id: 3,
+      title: "",
+      image: c3,
+    },
+    {
+      id: 4,
+      title: "",
+      image: c4,
+    },
+  ];
 
   const ingredients = [
     {
@@ -142,7 +142,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div style={{ backgroundColor: '#f4ece6' }} className="pt-16 text-[#f4ece6]">
-      <SEO 
+      <SEO
         title="TerraSkin | Premium Skincare for Healthy, Radiant Skin"
         description="Discover TerraSkin's collection of premium, dermatologist-tested skincare products. Natural ingredients and science-backed formulations for your best skin yet."
         schema={{
@@ -205,7 +205,7 @@ const HomePage: React.FC = () => {
               About <span className="text-[#8d4745]">Us</span>
             </h2>
             <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
-              Founded by dermatologist Dr.Tanuja, TerraSkin was born from a passion for creating effective, gentle skincare solutions that work in harmony with your skin's natural processes.
+              Founded by MaralaTanuja, TerraSkin was born from a passion for creating effective, gentle skincare solutions that work in harmony with your skin's natural processes.
             </p>
           </div>
 
@@ -338,35 +338,35 @@ const HomePage: React.FC = () => {
       </AnimatedSection>
 
       <section className="py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-semibold text-center mb-12 text-[#8d4745]">
-          Why choose Terraskin?
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {benefits.map((benefit) => (
-            <div
-              key={benefit.id}
-              className="relative rounded-xl overflow-hidden shadow-lg group cursor-pointer transform hover:scale-105 transition-transform duration-300"
-            >
-               <Link to="./shop">
-              <img
-                src={benefit.image}
-                alt={benefit.title}
-                className="w-full h-96 object-cover"
-              />
-              </Link>
-            
-              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-center px-4">
-                <p className="text-white font-semibold text-lg">
-                  {benefit.title}
-                </p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-semibold text-center mb-12 text-[#8d4745]">
+            Why choose Terraskin?
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {benefits.map((benefit) => (
+              <div
+                key={benefit.id}
+                className="relative rounded-xl overflow-hidden shadow-lg group cursor-pointer transform hover:scale-105 transition-transform duration-300"
+              >
+                <Link to="./shop">
+                  <img
+                    src={benefit.image}
+                    alt={benefit.title}
+                    className="w-full h-96 object-cover"
+                  />
+                </Link>
+
+                <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-center px-4">
+                  <p className="text-white font-semibold text-lg">
+                    {benefit.title}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
-    
+      </section>
+
 
 
 
@@ -410,13 +410,13 @@ const HomePage: React.FC = () => {
                 className="min-w-[250px] flex-shrink-0 rounded-lg overflow-hidden text-[#8d4745]"
               >
                 <Link to="./shop">
-                <img
-                  src={concern.img}
-                  alt={concern.label}
-                  className="w-full h-64 object-cover"
-                />
+                  <img
+                    src={concern.img}
+                    alt={concern.label}
+                    className="w-full h-64 object-cover"
+                  />
                 </Link>
-         
+
                 <p className="text-center font-bold mt-2">{concern.label}</p>
               </div>
             ))}
