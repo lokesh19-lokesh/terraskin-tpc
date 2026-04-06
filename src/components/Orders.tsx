@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { toast } from "react-toastify";
 import SEO from "./SEO";
+import { CheckCircle } from "lucide-react";
 
 const Orders: React.FC = () => {
   const [orders, setOrders] = useState<any[]>([]);
@@ -119,13 +120,24 @@ const Orders: React.FC = () => {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-[#8d4745] mb-8 font-['Playfair_Display']">My Orders</h1>
         <div className="space-y-6">
-          {orders.map((order: any) => (
+          {orders.map((order: any) => {
+            const liveStatus = (trackingInfo[order.id]?.tracking_data?.shipment_track?.[0]?.current_status || 
+                                trackingInfo[order.id]?.tracking_data?.shipment_status_name || "").toUpperCase();
+            const isDelivered = order.status === 'delivered' || liveStatus === 'DELIVERED';
+
+            return (
             <div key={order.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">
-                    Order ID: <span className="text-gray-800 font-mono">{order.id.substring(0, 8).toUpperCase()}</span>
+                  <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center flex-wrap gap-2">
+                    <span>Order ID: <span className="text-gray-800 font-mono">{order.id.substring(0, 8).toUpperCase()}</span></span>
                   </h3>
+                  {isDelivered && (
+                    <div className="flex items-center gap-1 text-green-600 mb-1">
+                      <CheckCircle className="w-4 h-4" />
+                      <span className="text-xs font-bold lowercase">delivered</span>
+                    </div>
+                  )}
                   <p className="text-xs text-gray-400">{new Date(order.created_at).toLocaleString()}</p>
                 </div>
                 <div className="text-right">
@@ -257,7 +269,7 @@ const Orders: React.FC = () => {
                 </div>
               )}
             </div>
-          ))}
+          )})}
         </div>
       </div>
     </div>
