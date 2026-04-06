@@ -74,7 +74,12 @@ const Payment: React.FC = () => {
     }
   };
 
+  const [isProcessing, setIsProcessing] = React.useState(false);
+
   const handlePayment = () => {
+    if (isProcessing) return;
+    setIsProcessing(true);
+
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
@@ -95,7 +100,7 @@ const Payment: React.FC = () => {
             try {
               if (!session?.user?.id) throw new Error("No active user session");
 
-              toast.info("Processing your order...");
+              toast.info("Verifying payment and creating order...");
 
               const nameParts = (shippingAddress.name || "Guest").trim().split(/\s+/);
               const firstName = nameParts[0];
@@ -117,6 +122,7 @@ const Payment: React.FC = () => {
               });
 
               if (checkoutError) {
+                setIsProcessing(false);
                 toast.error("Order Processing Error: " + checkoutError.message);
                 throw checkoutError;
               }
@@ -128,17 +134,20 @@ const Payment: React.FC = () => {
                   navigate("/orders");
                 }, 1500);
               } else {
+                setIsProcessing(false);
                 const errMsg = checkoutData?.error ? (typeof checkoutData.error === 'object' ? JSON.stringify(checkoutData.error) : checkoutData.error) : "Checkout failed";
-                toast.error(`Shiprocket Error: ${errMsg}`);
+                toast.error(`Error: ${errMsg}`);
               }
 
             } catch (err: any) {
+              setIsProcessing(false);
               console.error("Order processing failed:", err);
               toast.error(`Order processing failed: ${err.message || 'Please contact support.'}`);
             }
           },
           modal: {
             ondismiss: function () {
+              setIsProcessing(false);
               toast.info("Payment cancelled.");
               logAbandonedOrder('abandoned');
             }
@@ -147,23 +156,28 @@ const Payment: React.FC = () => {
         };
 
         if (total <= 0) {
+          setIsProcessing(false);
           toast.error("Total amount must be greater than 0");
           return;
         }
 
         const paymentObject = new window.Razorpay(options);
         paymentObject.on('payment.failed', function (response: any) {
+          setIsProcessing(false);
           alert("Oops! Something went wrong.\n" + response.error.description);
           logAbandonedOrder('failed');
         });
         paymentObject.open();
       } else {
+        setIsProcessing(false);
         toast.error("Razorpay SDK failed to load. Please try again later.");
       }
     };
 
-    script.onerror = () =>
+    script.onerror = () => {
+      setIsProcessing(false);
       toast.error("Failed to load Razorpay. Check your internet connection.");
+    };
 
     document.body.appendChild(script);
   };
@@ -225,9 +239,14 @@ const Payment: React.FC = () => {
 
           <button
             onClick={handlePayment}
-            className="w-full bg-[#8d4745] text-white py-4 px-6 rounded-xl font-bold text-lg hover:bg-[#7a3f3d] transition-all duration-300 shadow-lg shadow-[#8d4745]/20 hover:shadow-[#8d4745]/40"
+            disabled={isProcessing}
+            className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg ${
+              isProcessing 
+                ? "bg-gray-400 cursor-not-allowed shadow-none" 
+                : "bg-[#8d4745] text-white hover:bg-[#7a3f3d] shadow-[#8d4745]/20 hover:shadow-[#8d4745]/40"
+            }`}
           >
-            Pay Securely Now
+            {isProcessing ? "Processing..." : "Pay Securely Now"}
           </button>
         </div>
       </div>

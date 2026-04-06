@@ -93,19 +93,56 @@ serve(async (req) => {
         }
       }
 
-      // 2. 💰 Capture Payment
-      console.log(`💰 Capturing Razorpay Payment: ${paymentId}`)
-      const rzpRes = await fetch(`https://api.razorpay.com/v1/payments/${paymentId}/capture`, {
-        method: 'POST',
-        headers: { 'Authorization': `Basic ${authHeader}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: Math.round(totalAmount * 100), currency: "INR" })
+      // 1-b. 🛡️ IDEMPOTENCY CHECK (Check if order already exists)
+      const { data: existingOrder } = await supabaseAdmin
+        .from('orders')
+        .select('id')
+        .eq('payment_id', paymentId)
+        .maybeSingle()
+
+      if (existingOrder) {
+        console.log(`✅ Order already exists for Payment ID: ${paymentId}. Returning existing Order ID: ${existingOrder.id}`)
+        return new Response(JSON.stringify({ success: true, orderId: existingOrder.id }), { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        })
+      }
+
+      // 2. 💰 Capture Payment (if not already captured)
+      console.log(`🔍 Checking Razorpay Payment Status: ${paymentId}`)
+      const checkRes = await fetch(`https://api.razorpay.com/v1/payments/${paymentId}`, {
+        headers: { 'Authorization': `Basic ${authHeader}` }
       })
       
-      if (!rzpRes.ok) {
-        const rzpErr = await rzpRes.json()
-        console.error("❌ Razorpay Capture Error:", rzpErr)
-        // We don't throw here yet if we want to allow re-trying, but usually, failure here means stop.
-        throw new Error(`Payment capture failed: ${rzpErr.error?.description || 'Unknown error'}`)
+      if (!checkRes.ok) {
+        const checkErr = await checkRes.json()
+        throw new Error(`Failed to verify payment: ${checkErr.error?.description || 'Unknown error'}`)
+      }
+      
+      const paymentData = await checkRes.json()
+      console.log(`💳 Payment status is: ${paymentData.status}`)
+
+      if (paymentData.status === 'authorized') {
+        console.log(`💰 Capturing Razorpay Payment: ${paymentId}`)
+        const rzpRes = await fetch(`https://api.razorpay.com/v1/payments/${paymentId}/capture`, {
+          method: 'POST',
+          headers: { 'Authorization': `Basic ${authHeader}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: Math.round(totalAmount * 100), currency: "INR" })
+        })
+        
+        if (!rzpRes.ok) {
+          const rzpErr = await rzpRes.json()
+          // If it was captured between our check and our capture call, we might still get this error.
+          if (rzpErr.error?.description === "This payment has already been captured") {
+            console.log("⚠️ Payment was captured in a concurrent request. Proceeding...")
+          } else {
+            console.error("❌ Razorpay Capture Error:", rzpErr)
+            throw new Error(`Payment capture failed: ${rzpErr.error?.description || 'Unknown error'}`)
+          }
+        }
+      } else if (paymentData.status !== 'captured') {
+        throw new Error(`Payment cannot be processed. Current status: ${paymentData.status}`)
+      } else {
+        console.log(`✅ Payment ${paymentId} is already captured. Proceeding with order creation.`)
       }
 
       // 3. 📄 Create Order in Supabase
