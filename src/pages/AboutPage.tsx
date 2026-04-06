@@ -12,7 +12,7 @@ const AboutPage: React.FC = () => {
 
   return (
     <div style={{ backgroundColor: '#f4ece6' }} className="pt-24">
-      <SEO 
+      <SEO
         title="Our Story & Values"
         description="Learn about the journey of TerraSkin, our commitment to natural ingredients, and our mission to provide effective, dermatologist-approved skincare for everyone."
         schema={{
@@ -47,10 +47,7 @@ const AboutPage: React.FC = () => {
               Our Story
             </h2>
             <p className="text-lg text-gray-600 leading-relaxed">
-              Founded by Tanuja, TerraSkin was born from a passion for creating
-              effective, gentle skincare solutions that work in harmony with your skin's natural processes.
-              After years of research and development, we've crafted a collection of products that combine
-              the best of nature and science.
+              Founded by Marala Tanuja, TerraSkin was born from a passion for creating effective, gentle skincare solutions that work in harmony with your skin's natural processes. After years of research and development, we've crafted a collection of products that combine the best of nature and science.
             </p>
           </div>
 
