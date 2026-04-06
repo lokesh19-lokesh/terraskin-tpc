@@ -180,7 +180,7 @@ const ProductDetails: React.FC = () => {
                       New
                     </span>
                   )}
-                  {product.originalPrice && (
+                  {(product.originalPrice || product.original_price) && (
                     <span className="bg-red-500 text-white px-3 py-1 text-sm rounded-full">
                       Sale
                     </span>
@@ -242,9 +242,9 @@ const ProductDetails: React.FC = () => {
                 <span className="text-3xl font-bold text-[#8d4745]">
                   ₹{product.price}
                 </span>
-                {product.originalPrice && (
+                {(product.originalPrice || product.original_price) && (
                   <span className="ml-3 text-xl text-gray-500 line-through">
-                    ₹{product.originalPrice}
+                    ₹{product.originalPrice || product.original_price}
                   </span>
                 )}
               </div>

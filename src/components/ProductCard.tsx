@@ -42,7 +42,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               New
             </span>
           )}
-          {product.originalPrice && (
+          {(product.originalPrice || product.original_price) && (
             <span className="bg-red-500 text-white px-2 py-1 text-xs rounded-full">
               Sale
             </span>
@@ -108,9 +108,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <span className="text-lg font-bold text-[#8d4745]">
             ₹{product.price}
           </span>
-            {product.originalPrice && (
+            {(product.originalPrice || product.original_price) && (
               <span className="ml-2 text-sm text-gray-500 line-through">
-                ₹{product.originalPrice}
+                ₹{product.originalPrice || product.original_price}
               </span>
             )}
           </div>

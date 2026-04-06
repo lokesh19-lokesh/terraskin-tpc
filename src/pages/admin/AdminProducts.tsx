@@ -13,6 +13,7 @@ const AdminProducts = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editName, setEditName] = useState("");
   const [editPrice, setEditPrice] = useState("");
+  const [editOriginalPrice, setEditOriginalPrice] = useState("");
   const [editStock, setEditStock] = useState("");
   const [editCategory, setEditCategory] = useState("");
   const [editImageUrl, setEditImageUrl] = useState("");
@@ -25,6 +26,7 @@ const AdminProducts = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [newName, setNewName] = useState("");
   const [newPrice, setNewPrice] = useState("");
+  const [newOriginalPrice, setNewOriginalPrice] = useState("");
   const [newStock, setNewStock] = useState("");
   const [newCategory, setNewCategory] = useState("serums");
   const [newImageUrl, setNewImageUrl] = useState("");
@@ -66,6 +68,7 @@ const AdminProducts = () => {
     setEditingId(product.id);
     setEditName(product.name);
     setEditPrice(product.price.toString());
+    setEditOriginalPrice(product.original_price ? product.original_price.toString() : "");
     setEditStock(product.stock_quantity.toString());
     setEditCategory(product.category);
     setEditImageUrl(product.image_url || "");
@@ -115,6 +118,7 @@ const AdminProducts = () => {
         .update({
           name: editName,
           price: parseFloat(editPrice),
+          original_price: editOriginalPrice ? parseFloat(editOriginalPrice) : null,
           stock_quantity: parseInt(editStock, 10),
           category: editCategory,
           image_url: finalImageUrl,
@@ -195,6 +199,7 @@ const AdminProducts = () => {
         {
           name: newName,
           price: parseFloat(newPrice),
+          original_price: newOriginalPrice ? parseFloat(newOriginalPrice) : null,
           stock_quantity: parseInt(newStock, 10),
           category: newCategory,
           image_url: finalImageUrl,
@@ -209,6 +214,7 @@ const AdminProducts = () => {
       setShowAddModal(false);
       setNewName("");
       setNewPrice("");
+      setNewOriginalPrice("");
       setNewStock("");
       setNewImageUrl("");
       setNewDescription("");
@@ -228,6 +234,7 @@ const AdminProducts = () => {
         name: p.name,
         description: p.description || p.fullDescription || "Premium Skincare Product",
         price: p.price,
+        original_price: p.originalPrice || null,
         stock_quantity: 100,
         category: p.category,
         image_url: Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : null
@@ -272,7 +279,7 @@ const AdminProducts = () => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Product</th>
-              <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Price</th>
+              <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Prices (Offer/MRP)</th>
               <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Stock</th>
               <th className="px-6 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
@@ -284,7 +291,12 @@ const AdminProducts = () => {
                   {product.name}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                  ₹{product.price}
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-gray-900">₹{product.price}</span>
+                    {product.original_price && (
+                      <span className="text-[10px] text-gray-400 line-through">MRP: ₹{product.original_price}</span>
+                    )}
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-gray-600">
                   {product.stock_quantity}
@@ -331,15 +343,19 @@ const AdminProducts = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
                 <input type="text" required value={editName} onChange={e => setEditName(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" />
               </div>
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Offer Price (₹)</label>
                   <input type="number" step="0.01" required value={editPrice} onChange={e => setEditPrice(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" />
                 </div>
-                <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-                  <input type="number" required value={editStock} onChange={e => setEditStock(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ordinary Price (₹)</label>
+                  <input type="number" step="0.01" value={editOriginalPrice} onChange={e => setEditOriginalPrice(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" placeholder="MRP" />
                 </div>
+              </div>
+              <div>
+                 <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+                 <input type="number" required value={editStock} onChange={e => setEditStock(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
@@ -392,15 +408,19 @@ const AdminProducts = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
                 <input type="text" required value={newName} onChange={e => setNewName(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" placeholder="e.g. Glowing Vitamin C Serum" />
               </div>
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
-                  <input type="number" step="0.01" required value={newPrice} onChange={e => setNewPrice(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" placeholder="45.99" />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Offer Price (₹)</label>
+                  <input type="number" step="0.01" required value={newPrice} onChange={e => setNewPrice(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" placeholder="Price" />
                 </div>
-                <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Initial Stock</label>
-                  <input type="number" required value={newStock} onChange={e => setNewStock(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" placeholder="100" />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ordinary Price (₹)</label>
+                  <input type="number" step="0.01" value={newOriginalPrice} onChange={e => setNewOriginalPrice(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" placeholder="MRP (Optional)" />
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Initial Stock</label>
+                <input type="number" required value={newStock} onChange={e => setNewStock(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" placeholder="100" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
