@@ -47,7 +47,7 @@ const AboutPage: React.FC = () => {
               Our Story
             </h2>
             <p className="text-lg text-gray-600 leading-relaxed">
-              Founded by Marala Tanuja, TerraSkin was born from a passion for creating effective, gentle skincare solutions that work in harmony with your skin's natural processes. After years of research and development, we've crafted a collection of products that combine the best of nature and science.
+              Founded by Marala Marala Tanuja, TerraSkin was born from a passion for creating effective, gentle skincare solutions that work in harmony with your skin's natural processes. After years of research and development, we've crafted a collection of products that combine the best of nature and science.
             </p>
           </div>
 
@@ -145,7 +145,7 @@ const AboutPage: React.FC = () => {
               <div className="absolute -inset-4 bg-[#8d4745]/10 rounded-2xl transform rotate-3 group-hover:rotate-0 transition-transform duration-500"></div>
               <img
                 src={founderImg}
-                alt="Tanuja - Founder of TerraSkin"
+                alt="Marala Tanuja - Founder of TerraSkin"
                 className="relative rounded-2xl shadow-2xl w-full h-[500px] object-cover object-top z-10"
               />
               <div className="absolute -bottom-6 -right-6 bg-[#8d4745] text-white p-6 rounded-2xl shadow-xl z-20 animate-bounce-subtle">
@@ -165,7 +165,7 @@ const AboutPage: React.FC = () => {
 
               <div className="space-y-6 text-gray-700 leading-relaxed text-lg">
                 <p className="font-semibold text-[#8d4745] text-2xl font-['Instrument_Serif'] italic">
-                  "I am Tanuja..."
+                  "I am Marala Tanuja..."
                 </p>
                 <p>
                   All my schooling and my B.Tech graduation was in Anantapur. Since then, I have been working as an IT employee.
@@ -186,7 +186,7 @@ const AboutPage: React.FC = () => {
                   <Award size={24} />
                 </div>
                 <div>
-                  <p className="font-bold text-gray-900">Tanuja</p>
+                  <p className="font-bold text-gray-900">Marala Tanuja</p>
                   <p className="text-sm text-gray-500">Founder & Visionary</p>
                 </div>
               </div>
