@@ -42,11 +42,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               New
             </span>
           )}
-          {(product.originalPrice || product.original_price) && (
-            <span className="bg-red-500 text-white px-2 py-1 text-xs rounded-full">
-              Sale
-            </span>
-          )}
+          {(() => {
+            const original = product.originalPrice || product.original_price;
+            if (original && original > product.price) {
+              const discount = Math.round(((original - product.price) / original) * 100);
+              return (
+                <span className="bg-red-500 text-white px-2 py-1 text-xs rounded-full font-bold">
+                  {discount}% OFF
+                </span>
+              );
+            }
+            return null;
+          })()}
         </div>
 
         {/* Wishlist button */}

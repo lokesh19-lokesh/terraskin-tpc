@@ -180,11 +180,18 @@ const ProductDetails: React.FC = () => {
                       New
                     </span>
                   )}
-                  {(product.originalPrice || product.original_price) && (
-                    <span className="bg-red-500 text-white px-3 py-1 text-sm rounded-full">
-                      Sale
-                    </span>
-                  )}
+                  {(() => {
+                    const original = product.originalPrice || product.original_price;
+                    if (original && original > product.price) {
+                      const discount = Math.round(((original - product.price) / original) * 100);
+                      return (
+                        <span className="bg-red-500 text-white px-3 py-1 text-sm rounded-full font-bold">
+                          {discount}% OFF
+                        </span>
+                      );
+                    }
+                    return null;
+                  })()}
                 </div>
               </div>
 
