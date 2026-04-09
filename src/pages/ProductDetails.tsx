@@ -357,7 +357,7 @@ const ProductDetails: React.FC = () => {
 
                 <div className="min-h-32">
                   {activeTab === 'description' && (
-                    <p className="text-gray-600 leading-relaxed">{product.fullDescription || product.description}</p>
+                    <p className="text-gray-600 leading-relaxed">{product.full_description || product.fullDescription || product.description}</p>
                   )}
                   {activeTab === 'ingredients' && (
                     <div className="space-y-2">

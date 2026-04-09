@@ -18,6 +18,9 @@ const AdminProducts = () => {
   const [editCategory, setEditCategory] = useState("");
   const [editImageUrl, setEditImageUrl] = useState("");
   const [editDescription, setEditDescription] = useState("");
+  const [editFullDescription, setEditFullDescription] = useState("");
+  const [editIngredients, setEditIngredients] = useState("");
+  const [editBenefits, setEditBenefits] = useState("");
   const [editFile, setEditFile] = useState<File | null>(null);
   const [editPreview, setEditPreview] = useState<string | null>(null);
   const [useEditUpload, setUseEditUpload] = useState(false);
@@ -31,6 +34,9 @@ const AdminProducts = () => {
   const [newCategory, setNewCategory] = useState("serums");
   const [newImageUrl, setNewImageUrl] = useState("");
   const [newDescription, setNewDescription] = useState("");
+  const [newFullDescription, setNewFullDescription] = useState("");
+  const [newIngredients, setNewIngredients] = useState("");
+  const [newBenefits, setNewBenefits] = useState("");
   const [uploading, setUploading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploadPreview, setUploadPreview] = useState<string | null>(null);
@@ -73,6 +79,9 @@ const AdminProducts = () => {
     setEditCategory(product.category);
     setEditImageUrl(product.image_url || "");
     setEditDescription(product.description || "");
+    setEditFullDescription(product.full_description || "");
+    setEditIngredients(product.ingredients ? product.ingredients.join('\n') : "");
+    setEditBenefits(product.benefits ? product.benefits.join('\n') : "");
     setEditPreview(product.image_url || "");
     setShowEditModal(true);
   };
@@ -123,6 +132,9 @@ const AdminProducts = () => {
           category: editCategory,
           image_url: finalImageUrl,
           description: editDescription,
+          full_description: editFullDescription,
+          ingredients: editIngredients.split('\n').map(s => s.trim()).filter(s => s !== ''),
+          benefits: editBenefits.split('\n').map(s => s.trim()).filter(s => s !== ''),
           is_active: true
         })
         .eq('id', editingId);
@@ -204,6 +216,9 @@ const AdminProducts = () => {
           category: newCategory,
           image_url: finalImageUrl,
           description: newDescription || "Premium Skincare Product",
+          full_description: newFullDescription,
+          ingredients: newIngredients.split('\n').map(s => s.trim()).filter(s => s !== ''),
+          benefits: newBenefits.split('\n').map(s => s.trim()).filter(s => s !== ''),
           is_active: true
         }
       ]);
@@ -218,6 +233,9 @@ const AdminProducts = () => {
       setNewStock("");
       setNewImageUrl("");
       setNewDescription("");
+      setNewFullDescription("");
+      setNewIngredients("");
+      setNewBenefits("");
       setImageFile(null);
       setUploadPreview(null);
       fetchProducts();
@@ -232,12 +250,15 @@ const AdminProducts = () => {
     try {
       const seedData = mockProducts.map(p => ({
         name: p.name,
-        description: p.description || p.fullDescription || "Premium Skincare Product",
+        description: p.description || "Premium Skincare Product",
+        full_description: p.fullDescription || p.description,
         price: p.price,
         original_price: p.originalPrice || null,
         stock_quantity: 100,
         category: p.category,
-        image_url: Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : null
+        image_url: Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : null,
+        ingredients: p.ingredients || [],
+        benefits: p.benefits || []
       }));
 
       const { error } = await supabase.from('products').insert(seedData);
@@ -384,8 +405,22 @@ const AdminProducts = () => {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Short Summary</label>
                 <textarea value={editDescription} onChange={e => setEditDescription(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" rows={2} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Full Description (Tabs Content)</label>
+                <textarea value={editFullDescription} onChange={e => setEditFullDescription(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" rows={3} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ingredients (One per line)</label>
+                  <textarea value={editIngredients} onChange={e => setEditIngredients(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" rows={4} placeholder="Vitamin C&#10;Hyaluronic Acid" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Benefits (One per line)</label>
+                  <textarea value={editBenefits} onChange={e => setEditBenefits(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" rows={4} placeholder="Brightens skin&#10;Hydrates" />
+                </div>
               </div>
               <button disabled={uploading} type="submit" className="w-full bg-[#8d4745] text-white py-3 rounded-lg hover:bg-[#7a3f3d] font-medium transition-colors mt-4">
                 {uploading ? "Saving Changes..." : "Save All Changes"}
@@ -479,8 +514,22 @@ const AdminProducts = () => {
                 <p className="text-[10px] text-gray-500">Note: Use JPG/PNG files for professional storefront results.</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea value={newDescription} onChange={e => setNewDescription(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" rows={2} placeholder="Describe the benefits..." />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Short Summary</label>
+                <textarea value={newDescription} onChange={e => setNewDescription(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" rows={2} placeholder="Brief highlight..." />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Full Description (Tabs Content)</label>
+                <textarea value={newFullDescription} onChange={e => setNewFullDescription(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" rows={3} placeholder="Detailed product story..." />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ingredients (One per line)</label>
+                  <textarea value={newIngredients} onChange={e => setNewIngredients(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" rows={4} placeholder="Item 1&#10;Item 2" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Benefits (One per line)</label>
+                  <textarea value={newBenefits} onChange={e => setNewBenefits(e.target.value)} className="w-full border rounded-lg p-2 focus:ring-[#8d4745] focus:outline-none" rows={4} placeholder="Benefit 1&#10;Benefit 2" />
+                </div>
               </div>
               <button 
                 type="submit" 
