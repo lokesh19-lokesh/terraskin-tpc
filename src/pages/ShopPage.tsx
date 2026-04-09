@@ -14,7 +14,7 @@ const ShopPage: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
     category: initialCategory,
-    priceRange: [0, 1000],
+    priceRange: [0, 5000],
     skinType: 'all',
     bestSellers: false,
     search: initialSearch
@@ -89,7 +89,7 @@ const ShopPage: React.FC = () => {
 
   return (
     <div style={{ backgroundColor: '#f4ece6' }} className="pt-24 min-h-screen bg-gray-50">
-      <SEO 
+      <SEO
         title="Shop All Skincare Products"
         description="Browse our complete collection of natural serums, moisturisers, and cleansers. Dermatologist-approved skincare solutions for every skin concern."
       />
@@ -226,7 +226,7 @@ const ShopPage: React.FC = () => {
               {filteredProducts.length === 0 && (
                 <div className="text-center py-12">
                   <p className="text-gray-500 text-lg">
-                    {filters.search 
+                    {filters.search
                       ? `No products found for "${filters.search}"`
                       : "No products found matching your filters."}
                   </p>
