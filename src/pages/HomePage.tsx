@@ -257,7 +257,7 @@ const HomePage: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
             {isLoading ? (
               [...Array(4)].map((_, i) => (
                 <div key={i} className="bg-gray-200 animate-pulse h-80 rounded-lg"></div>
@@ -342,7 +342,7 @@ const HomePage: React.FC = () => {
           <h2 className="text-3xl font-semibold text-center mb-12 text-[#8d4745]">
             Why choose Terraskin?
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {benefits.map((benefit) => (
               <div
                 key={benefit.id}
@@ -352,7 +352,7 @@ const HomePage: React.FC = () => {
                   <img
                     src={benefit.image}
                     alt={benefit.title}
-                    className="w-full h-96 object-cover"
+                    className="w-full h-56 md:h-96 object-cover"
                   />
                 </Link>
 
@@ -382,7 +382,7 @@ const HomePage: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {isLoading ? (
               [...Array(4)].map((_, i) => (
                 <div key={i} className="bg-gray-200 animate-pulse h-80 rounded-lg"></div>
