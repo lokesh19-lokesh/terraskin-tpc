@@ -19,6 +19,7 @@ import Orders from "./components/Orders";
 import AdminRoute from './components/AdminRoute';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import FloatingButtons from './components/FloatingButtons';
 import { supabase } from './lib/supabase';
 import { useEffect } from 'react';
 
@@ -89,6 +90,7 @@ const AppContent = () => {
         </Routes>
       </main>
       {!isAuthPage && <Footer />}
+      <FloatingButtons />
     </div>
   );
 };
