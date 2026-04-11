@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Clock, Plus, Minus } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Plus, Minus, Facebook, Instagram, Twitter } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
 import SEO from '../components/SEO';
 
@@ -255,22 +255,22 @@ const ContactPage: React.FC = () => {
                 <div className="mt-8 pt-8 border-t">
                   <h3 className="font-semibold text-gray-900 mb-4">Follow Us</h3>
                   <div className="flex space-x-4">
-                    <a href="#" className="text-gray-600 hover:text-[#8d4745] transition-colors duration-200">
+                    <a href="#" className="text-gray-600 hover:text-[#8d4745] transition-colors duration-200 group">
                       <span className="sr-only">Facebook</span>
-                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-[#8d4745] hover:text-white transition-colors duration-200">
-                        f
+                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-[#8d4745] group-hover:text-white transition-colors duration-200">
+                        <Facebook className="w-5 h-5" />
                       </div>
                     </a>
-                    <a href="#" className="text-gray-600 hover:text-[#8d4745] transition-colors duration-200">
+                    <a href="https://www.instagram.com/terraskinreal/" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-[#8d4745] transition-colors duration-200 group">
                       <span className="sr-only">Instagram</span>
-                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-[#8d4745] hover:text-white transition-colors duration-200">
-                        ig
+                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-[#8d4745] group-hover:text-white transition-colors duration-200">
+                        <Instagram className="w-5 h-5" />
                       </div>
                     </a>
-                    <a href="#" className="text-gray-600 hover:text-[#8d4745] transition-colors duration-200">
+                    <a href="#" className="text-gray-600 hover:text-[#8d4745] transition-colors duration-200 group">
                       <span className="sr-only">Twitter</span>
-                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-[#8d4745] hover:text-white transition-colors duration-200">
-                        tw
+                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-[#8d4745] group-hover:text-white transition-colors duration-200">
+                        <Twitter className="w-5 h-5" />
                       </div>
                     </a>
                   </div>
