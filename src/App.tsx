@@ -42,6 +42,10 @@ const AppContent = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   return (
     <div className="min-h-screen bg-white">
       {!isAuthPage && <Header />}
