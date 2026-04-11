@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
               <a href="#" className="text-gray-400 hover:text-[#8d4745] transition-colors duration-200">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-[#8d4745] transition-colors duration-200">
+              <a href="https://www.instagram.com/terraskinreal/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#8d4745] transition-colors duration-200">
                 <Instagram className="h-5 w-5" />
               </a>
               <a href="#" className="text-gray-400 hover:text-[#8d4745] transition-colors duration-200">
